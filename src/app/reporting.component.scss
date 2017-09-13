@@ -1,0 +1,221 @@
+.reporting {
+    width: 100%;
+    height: 100%;
+    display: block;
+    overflow: hidden;
+
+    .r-titlebar {
+        display: inline-flex;
+        height: 60px;
+        width: 100%;
+        background-color: #FAFAFA;
+    
+        .basic-info {
+            display: inline-flex;
+            width: 280px;
+            padding-top: 10px;
+            padding-left: 10px;
+    
+            label {
+                color: #c3bcbc;
+            }
+        }
+
+        .template-widgets {
+            width: calc(100% - 480px);
+            display: inline-flex;
+            height: 60px;
+            align-items: center;
+            justify-content: center;
+
+            .r-action {
+                font-size: 2rem;
+                margin-left: 2rem;;
+                cursor: pointer;
+            
+                &:hover {
+                    color: #1E90FF;
+                }
+            }
+        }
+
+        .action-buttons {
+            display: inline-flex;
+            width: 200px;
+            height: 60px;
+            align-items: center;
+            justify-content: space-between;
+            padding-right: 20px;
+
+            .r-action {
+                font-size: 2rem;
+                cursor: pointer;
+            
+                &:hover {
+                    color: #1E90FF;
+                }
+            }
+        }
+    }
+
+    .r-container {
+        width: 100%;
+        display: inline-flex;
+
+        .r-thumbnails {
+            height: inherit;
+            width: 240px;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        .r-editors {
+            height: inherit;
+            width: calc(100% - 540px);
+            overflow-x: hidden;
+            overflow-y: auto;
+            background-color: #FAFAD2;
+
+            .paper {
+                background: white;
+                width: 95%;
+                height: 90%;
+                margin: 20px;
+            }
+
+        }
+
+        .r-configurations {
+            height: inherit;
+            width: 300px;
+            overflow-x: hidden;
+            overflow-y: auto;
+
+            .r-datasource {
+                > h5 {
+                    margin-left: 15px;
+                    margin-top: 20px;
+                }
+
+                .r-line {
+                    width: 100%;
+                    height: 2px;
+                    margin-top: 10px;
+                    margin-bottom: 10px;
+                    background-color: lightgray;
+                }
+            }
+
+            .r-add {
+                font-size: 2rem;
+                margin-left: 2rem;;
+                cursor: pointer;
+            
+                &:hover {
+                    color: #1E90FF;
+                }
+            }
+
+            .r-group {
+                cursor: pointer;
+                font-size: 1.5rem;
+                margin-top: 3px;
+                margin-right: -15px;
+                float: right;
+            
+                &:hover {
+                    color: #1E90FF;
+                }
+            }
+
+            .r-titles {
+                width: 100%;
+                background-color: white;
+            
+                > span {
+                    float: right;
+                    margin-right: 20px;
+                }
+            
+                > strong {
+                    margin-left: 15px;
+                }
+            }
+
+            .r-content {
+                margin-top: 10px;
+
+                ul {
+                    list-style-type: none; 
+                }
+
+                .outer {
+                    margin-left: -40px;
+                }
+
+                .inner {
+                    margin-left: -20px;
+                }
+
+                li {
+                    .dx-texteditor-container > input {
+                        width: 250px !important;
+                        padding-left: 20px !important;
+                        padding-right: 50px !important;
+                     }
+                }
+            }
+        }
+
+    }
+
+    .r-overlay {
+        .r-overlay-titlebar {
+            height: 30px;
+            background: #2399e5;
+            border: 1px solid #2399e5;
+            color: white;
+            width: 100%;
+
+            > span {
+                width: 100%;
+                line-height: 30px;
+                margin-left: 0.5em;
+                font-weight: bold;
+            }  
+        }
+
+        .r-overlay-content {
+            .r-secondary-page {
+                height: 220px;
+
+                .r-widgets {
+                    height: 180px;
+                }
+
+                .r-buttons {
+                    height: 40px;
+                    display: inline-flex;
+                    float: right;
+                    margin-right: 10px;
+
+                    .r-button {
+                        padding: 0px 12px;
+                        height: 25px;
+                        border: none;
+                    }
+
+                    .r-button-margin {
+                        margin-right: 15px;
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+

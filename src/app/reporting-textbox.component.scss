@@ -1,0 +1,43 @@
+.r-icon {
+    font-size: 1.8rem;
+    cursor: pointer;
+    margin-top: 6px;
+
+    &:hover {
+        color: #1E90FF;
+    }
+}
+
+.r-meatball_left {
+    z-index: 10;
+    margin-right: -10px;
+    margin-left: 15px;
+    padding-left: 5px;
+ }
+
+ .r-meatball_right {
+    z-index: 10;
+    margin-right: -70px;
+    padding-left: 2px;
+ }
+
+.r-group {
+    margin-top: 10px;
+
+    > label {
+        margin-left: 10px;
+    }
+}
+
+ .tb-edit {
+    margin-left: -40px; 
+ }
+
+ .sub_tb-edit {
+    margin-left: -60px; 
+}
+
+ .r-remove {
+    margin-left: 10px;
+    margin-right: 10px;
+ }

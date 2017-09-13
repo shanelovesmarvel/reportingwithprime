@@ -1,0 +1,170 @@
+/* You can add global styles to this file, and also import other style files */
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+
+body {
+    overflow: hidden;
+}
+
+.ui-menu .ui-menuitem-text, .ui-menu .ui-menuitem-link .ui-menuitem-icon {
+    color: black !important;
+}
+
+.ui-menu .ui-menuitem-text:hover, .ui-menu .ui-menuitem-link .ui-menuitem-icon:hover {
+    color: #1E90FF !important;
+}
+
+.ui-overlaypanel {
+    width: 200px !important;
+    height: 250px !important;
+    margin-top: -1.8em !important;
+    background-color: white;
+}
+
+.ui-overlaypanel-content {
+    padding: 0 !important;
+}
+
+.ui-overlaypanel-close {
+    top: 0 !important;
+    right: 0 !important;
+    font-size: 1.5em;
+    color: white;
+}
+
+.ui-listbox-item:hover {
+    background: #2399e5 !important;
+    color: white !important;
+}
+
+p-menu > .ui-menu {
+    background-color: white !important;
+    margin-left: -4em !important;
+    margin-top: 0.25em !important;
+    width: 11em !important;
+}
+
+#addMenu > .ui-menu {
+    background-color: white !important;
+    margin-left: -11.8em !important;
+    margin-top: -2.2em !important;
+    width: 11em !important;
+}
+
+#editMenu > .ui-menu {
+    background-color: white !important;
+    margin-left: -18.6em !important;
+    margin-top: -2em !important;
+    width: 11em !important;
+}
+
+.ui-inputtext {
+    width: 100% !important;
+    margin-bottom: 0.5em !important;
+    border: none !important;
+}
+
+:focus {
+    outline: none !important; 
+}
+
+.dx-datagrid-rowsview .dx-selection.dx-row:not(.dx-row-lines) > td {
+    background-color: #1E90FF !important;
+    color: whitesmoke !important;
+}
+
+.dx-datagrid-rowsview .dx-state-hover.dx-row:not(.dx-row-lines) > td {
+    background-color: #3BBFD5 !important;
+    color: whitesmoke !important;
+}
+
+#r-grid {
+     height: 300px;
+ }
+
+r-textbox {
+    margin-left: -5px;
+}
+
+.tb .dx-texteditor-container > input {
+    width: 270px !important;
+    padding-left: 20px !important;
+    padding-right: 50px !important;
+ }
+
+ .sub_tb .dx-texteditor-container > input {
+    width: 250px !important;
+    padding-left: 20px !important;
+    padding-right: 50px !important;
+ }
+
+r-textbox .dx-texteditor-input {
+     border-radius: 0 !important;
+ }
+
+r-textbox .dx-texteditor {
+     margin-left: 50px !important;
+     border: 0 !important;
+ }
+
+ r-dropdown .ui-dropdown, r-datepicker .ui-dropdown {
+    border: 1px solid lightgray;
+    width: 180px !important;
+    margin-left: 10px;
+    height: 30px;
+ }
+
+ r-dropdown .ui-dropdown .ui-dropdown-trigger .fa ,  r-datepicker .ui-dropdown .ui-dropdown-trigger .fa{
+    margin-top: .5em;
+}
+
+ r-dropdown .ui-dropdown .ui-dropdown-trigger,  r-datepicker .ui-dropdown .ui-dropdown-trigger {
+    border-left: 1px solid lightgray;
+}
+
+ r-dropdown .ui-dropdown-panel,   r-datepicker .ui-dropdown-panel{
+     background: white;
+ }
+
+r-datepicker .ui-calendar {
+    border: 1px solid lightgray;
+    width: 180px;
+    margin-left: 10px;
+    margin-top: 5px;
+    height: 30px;
+    z-index: 1010;
+}
+
+r-datepicker .ui-datepicker {
+    background: white;
+}
+
+r-datepicker .ui-datepicker table {
+    z-index: 1099;
+}
+
+r-textinput .dx-texteditor-container > input,  r-datepicker .dx-texteditor-container > input {
+    width: 180px !important;
+    margin-left: 10px;
+    border: 1px solid lightgray;
+ }
+
+ r-textinput .dx-texteditor-input, r-datepicker .dx-texteditor-input {
+     border-radius: 0 !important;
+ }
+
+ r-textinput .dx-texteditor,  r-datepicker .dx-texteditor {
+     border: 0 !important;
+ }
+
+ r-datepicker .dx-texteditor-container {
+    margin-top: 5px;
+}
+
+r-radiogroup .dx-radiogroup-horizontal .dx-radiobutton {
+    margin-left: 10px;
+    display: flex;
+}
+
+r-radiogroup .dx-item-content {
+    margin-left: 5px;
+}
