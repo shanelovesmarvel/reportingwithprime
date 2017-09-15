@@ -18,7 +18,6 @@ import { ResizeEvent } from 'angular-resizable-element';
             [resizeSnapGrid]="{left: 50, right: 50}"
             [validateResize]="validate"
             (resizeEnd)="onResizeEnd($event)">
-            <input type="text" *ngIf="false" class="'r-title'" pInputText [(ngModel)]="title" placeholder="Click to add title.">
             <p-dataTable *ngIf="false"
                 [value]="data" 
                 draggable="false" 
