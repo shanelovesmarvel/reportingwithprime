@@ -382,4 +382,5 @@ export interface ITextBox {
     level?: string;
     selected?: boolean;
     parent?: string;
+    grouped?: boolean;
 }
