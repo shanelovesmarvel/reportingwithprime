@@ -282,14 +282,15 @@ export class ReportingComponent implements OnInit {
     groupSummaries: IGridColumnSummary[] = [];
     gridData: any[] = [];
     pristineData: any[] = [];
-    dsClassifications: any[] = [];
-    dsColumns: any[] = [];
+    dsClassifications: RTextbox[] = [];
+    dsColumns: RTextbox[] = [];
     classiMenus: any[] = [];
 
     selectedListItem: string;
     formGroup: FormGroup;
     mvDate: string = "12/31/2015";
     mvCurrency: string = "USD";
+    order: string = "Ascending";
     nodes: any[] = [];
     mode: string = "";
     groupItems: string[] = [];
@@ -360,18 +361,16 @@ export class ReportingComponent implements OnInit {
 
     onSave() {
         if (this.overlayOptions.type === DataSourceTypes.Classification) {
-            let item: any = this.dsClassifications.find((textbox: any) => textbox.options.name === this.overlayOptions.classification);
-            if (item) {
-                return;
-            } else {
-                this.addClassification(this.overlayOptions.classification, this.mode);
 
-                this.options.children[0].options.data = this.gridData;
-                this.options.children[0].options.columns = this.columns;
-                this.options.children[0].options.summaries = this.summaries;
-                this.options.children[0].options.groupSummaries = this.groupSummaries;
-                this.tOptions.classic.children = this.dsClassifications;
-            }
+            let { Order } = this.formGroup.getRawValue();
+            this.order = Order;
+            this.addClassification(this.overlayOptions.classification, this.mode, Order);
+
+            this.options.children[0].options.data = this.gridData;
+            this.options.children[0].options.columns = this.columns;
+            this.options.children[0].options.summaries = this.summaries;
+            this.options.children[0].options.groupSummaries = this.groupSummaries;
+            this.tOptions.classic.children = this.dsClassifications;
         }
         else if (this.overlayOptions.type === DataSourceTypes.Column) {
             if (this.mode === ActionModes.Add) {
@@ -638,7 +637,7 @@ export class ReportingComponent implements OnInit {
         this.mode = ActionModes.Remove;
         if (options.type === DataSourceTypes.Classification) {
             this.removeClassification(options.name);
-            
+
             this.options.children[0].options.data = this.gridData;
             this.options.children[0].options.columns = this.columns;
             this.options.children[0].options.summaries = this.summaries;
@@ -646,6 +645,8 @@ export class ReportingComponent implements OnInit {
             this.tOptions.classic.children = this.dsClassifications;
         }
         else if (options.type === DataSourceTypes.Column) {
+            console.info(this.columns);
+            console.warn(options);
             if (options.level === "top") {
                 this.columns.map((column: IGridColumn) => {
                     if (column.dataField === options.name) {
@@ -747,6 +748,30 @@ export class ReportingComponent implements OnInit {
                 ]
             }
         }
+        else {
+            let isExisted: RTextbox = this.dsColumns.find((tx: RTextbox) => tx.options.name === columnName);
+            if (isExisted) {
+                return;
+            }
+            this.columns.map((column: IGridColumn) => {
+                if (column.dataField === columnName) {
+                    column.visible = true;
+                }
+            });
+            this.dsColumns.push({
+                selector: "r-textbox",
+                options: {
+                    name: columnName,
+                    value: columnName,
+                    id: columnName,
+                    type: DataSourceTypes.Column,
+                    className: TEXTBOX_CLASSNAME,
+                    editClassName: TEXTBOX_EDIT_CLASSNAME,
+                    level: "top"
+                }
+            });
+            this.overlay.hide();
+        }
     }
 
     setClassficationDetails(classificationName: string) {
@@ -761,7 +786,7 @@ export class ReportingComponent implements OnInit {
                 {
                     selector: "r-radiogroup",
                     options: {
-                        value: "Ascending",
+                        value: this.order,
                         name: "Order",
                         caption: "Order",
                         dataSource: ["Ascending", "Dscending"],
@@ -931,11 +956,23 @@ export class ReportingComponent implements OnInit {
         });
     }
 
-    addClassification(type: string, mode: string = ActionModes.Add) {
+    addClassification(type: string, mode: string = ActionModes.Add, order: string = "Ascending") {
         let isExisted: RTextbox = this.dsClassifications.find((tx: RTextbox) => type === tx.options.name);
-        if (isExisted) {
+        if (isExisted && mode === ActionModes.Add) {
             return;
         }
+        if (isExisted && mode === ActionModes.Edit) {
+            appraisalData.sort((a: any, b: any): number => {
+                return order === "Ascending" ? (a[type] < b[type] ? -1 : 1) : (a[type] < b[type] ? 1 : -1);
+            });
+            if (this.dsClassifications.length === 1) {
+                this.gridData = this.fetchData(type);
+            } else {
+                this.gridData = this.fetchData(Classifications.Security);
+            }
+            return;
+        }
+
         let orginalIndex: number = 1;
 
         if (mode === ActionModes.Add) {
@@ -977,8 +1014,11 @@ export class ReportingComponent implements OnInit {
             if (sum.customizeText === customizeGroupText && (orginalIndex || this.dsClassifications.length === 1)) {
                 sum.column = type;
             }
-        })
+        });
 
+        appraisalData.sort((a: any, b: any): number => {
+            return order === "Ascending" ? (a[type] < b[type] ? -1 : 1) : (a[type] < b[type] ? 1 : -1);
+        });
 
         if (mode === ActionModes.Add) {
             if (this.dsClassifications.length === 0) {
@@ -1023,31 +1063,31 @@ export class ReportingComponent implements OnInit {
                     col.caption = col.dataField;
                     col.visible = true;
                     remainType = Classifications.AssetClass;
-                } 
+                }
                 else {
                     if (col.dataField === type) {
                         col.groupIndex = -1;
                         col.caption = type;
-                        col.visible = false; 
-                    } 
+                        col.visible = false;
+                    }
                     else {
                         let removedIndex: number = this.dsClassifications.findIndex((tx: RTextbox) => tx.options.name === type);
                         let index: number = this.dsClassifications.findIndex((tx: RTextbox) => tx.options.name === col.dataField);
-                        if (this.dsClassifications.length === 2) { 
+                        if (this.dsClassifications.length === 2) {
                             col.groupIndex = -1;
                             col.caption = index > -1 ? Caption : col.dataField;
                             col.visible = index > -1;
                             if (index > -1) {
                                 remainType = col.dataField;
                             }
-                        } 
+                        }
                         if (this.dsClassifications.length === 3) {
                             if (removedIndex === 0) {
                                 if (index === 1) {
                                     col.groupIndex = 0;
                                     col.caption = col.dataField;
                                     col.visible = false;
-                                } 
+                                }
                                 if (index === 2) {
                                     col.groupIndex = -1;
                                     col.caption = Caption;
@@ -1073,10 +1113,10 @@ export class ReportingComponent implements OnInit {
                                     remainType = col.dataField;
                                 }
                             }
-                        } 
+                        }
                     }
                 }
-            }      
+            }
         });
 
         this.summaries.map((sum: IGridColumnSummary) => {

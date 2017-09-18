@@ -285,7 +285,7 @@ export class ReportingRadioGroupComponent implements OnInit {
     }
 
     onValueChanged(event) {
-
+        this.formCtrl.setValue(event.value);
     }
 
     constructor() { }
@@ -359,10 +359,13 @@ export interface IDropdown {
 }
 
 export interface ITextBox {
+    className?: string;
+    editClassName?: string;
     focusStateEnabled?: boolean;
     height?: number | string | Function;
     hint?: string;
     hoverStateEnabled?: boolean;
+    id?: string;
     inputArr?: string;
     maxLength?: string | number;
     mode?: string;  // text, email, search, tel, url, password
