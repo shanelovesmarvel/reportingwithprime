@@ -318,20 +318,6 @@ export class ReportingComponent implements OnInit {
         });
     }
 
-    onAfterHide() {
-        this.overlayOptions = {
-            title: "",
-            tempTitle: "",
-            type: "",
-            column: "",
-            classification: "",
-            items: [],
-            secondary: {
-                children: []
-            }
-        };
-        this.selectedListItem = null;
-    }
 
     resortColumn() {
         let orders: Array<any> = this.tOptions.column.children.map((item: any) => {
@@ -345,10 +331,11 @@ export class ReportingComponent implements OnInit {
 
     onBackToList() {
         if (this.overlayOptions.items.length === 0) {
-            if (this.overlayOptions.type === "column") {
-                this.addColumnItems();
-            } else if (this.overlayOptions.type === "classification") {
+            if (this.overlayOptions.type === DataSourceTypes.Classification) {
                 this.addClassficationItems();
+            }
+            else if (this.overlayOptions.type === DataSourceTypes.Column) {
+                this.addColumnItems();
             }
             this.overlayOptions.items = this.classiMenus;
         }
@@ -363,17 +350,31 @@ export class ReportingComponent implements OnInit {
         if (!obj || !obj.value) {
             return;
         }
-        if (this.overlayOptions.type === "column") {
-            this.setColumnDetails(obj.value);
-        }
-        else if (this.overlayOptions.type === "classification") {
+        if (this.overlayOptions.type === DataSourceTypes.Classification) {
             this.setClassficationDetails(obj.value);
+        }
+        else if (this.overlayOptions.type === DataSourceTypes.Column) {
+            this.setColumnDetails(obj.value);
         }
     }
 
     onSave() {
-        if (this.overlayOptions.type === "column") {
-            if (this.mode === "add") {
+        if (this.overlayOptions.type === DataSourceTypes.Classification) {
+            let item: any = this.dsClassifications.find((textbox: any) => textbox.options.name === this.overlayOptions.classification);
+            if (item) {
+                return;
+            } else {
+                this.addClassification(this.overlayOptions.classification, this.mode);
+
+                this.options.children[0].options.data = this.gridData;
+                this.options.children[0].options.columns = this.columns;
+                this.options.children[0].options.summaries = this.summaries;
+                this.options.children[0].options.groupSummaries = this.groupSummaries;
+                this.tOptions.classic.children = this.dsClassifications;
+            }
+        }
+        else if (this.overlayOptions.type === DataSourceTypes.Column) {
+            if (this.mode === ActionModes.Add) {
                 let { AsDate, Currency } = this.formGroup.getRawValue();
                 let newValue: string = `Market Value(${AsDate})`;
                 let columnx: IGridColumn = this.columns.find((column: IGridColumn) => column.dataField === newValue);
@@ -421,7 +422,9 @@ export class ReportingComponent implements OnInit {
                 this.mvDate = AsDate;
                 this.mvCurrency = Currency;
 
-            } else if (this.mode === "edit") {
+            }
+
+            else if (this.mode === ActionModes.Edit) {
                 if (this.overlayOptions.grouped) {
                     let GroupName = this.formGroup.getRawValue()[this.overlayOptions.column];
                     this.columns.map((column: IGridColumn) => {
@@ -457,7 +460,9 @@ export class ReportingComponent implements OnInit {
                     this.mvDate = AsDate;
                     this.mvCurrency = Currency;
                 }
-            } else if (this.mode === "group") {
+            }
+
+            else if (this.mode === ActionModes.Group) {
                 let { GroupName } = this.formGroup.getRawValue();
                 let subColumns: IGridColumn[] = [];
                 let subTextboxes: any[] = [];
@@ -555,255 +560,41 @@ export class ReportingComponent implements OnInit {
             this.groupItems = [];
 
         }
-        else if (this.overlayOptions.type === "classification") {
-            let item: any = this.dsClassifications.find((textbox: any) => textbox.options.name === this.overlayOptions.classification);
-            if (item) {
-                return;
-            } else {
-                let hasAsset: number = this.dsClassifications.findIndex((textbox: any) => textbox.options.name === "Asset Class");
-                let hasSecurityType: number = this.dsClassifications.findIndex((textbox: any) => textbox.options.name === "Security Type");
-                let hasSecurity: number = this.dsClassifications.findIndex((textbox: any) => textbox.options.name === "Security");
-
-                if (hasAsset === 0) {
-                    if (this.dsClassifications.length === 1) {
-                        if (this.overlayOptions.classification === "Security Type") {
-                            this.columns.map((column: IGridColumn) => {
-                                if (column.dataField === "Asset Class") {
-                                    column.groupIndex = 0;
-                                    column.visible = false;
-                                } else if (column.dataField === "Security Type") {
-                                    column.visible = true;
-                                    column.groupIndex = -1;
-                                    column.caption = "Name";
-                                } else if (column.dataField === "Security") {
-                                    column.visible = false;
-                                    column.groupIndex = -1;     
-                                }
-                            });
-                            this.gridData = appraisalData.filter((item: any) => item["Security Type"] !== "" && item.Security === "");
-                        }
-                        else if (this.overlayOptions.classification === "Security") {
-                            this.columns.map((column: IGridColumn) => {
-                                if (column.dataField === "Asset Class") {
-                                    column.groupIndex = 0;
-                                    column.visible = false;
-                                } else if (column.dataField === "Security") {
-                                    column.visible = true;
-                                    column.caption = "Name";
-                                } else if (column.dataField === "Security Type") {
-                                    column.visible = false;
-                                    column.groupIndex = -1;
-                                }
-                            });
-                        }
-                        this.gridData = appraisalData.filter((item: any) => item["Security Type"] !== "" && item.Security === "");
-                    }
-
-                    else if (this.dsClassifications.length === 2) {
-                        if (this.overlayOptions.classification === "Security Type") {
-                            this.columns.map((column: IGridColumn) => {
-                                if (column.dataField === "Asset Class") {
-                                    column.groupIndex = 0;
-                                    column.visible = false;
-                                } else if (column.dataField === "Security Type") {
-                                    column.visible = true;
-                                    column.groupIndex = -1;
-                                    column.caption = "Name";
-                                } else if (column.dataField === "Security") {
-                                    column.visible = false;
-                                    column.groupIndex = 1;     
-                                }
-                            });
-                        }
-                        else if (this.overlayOptions.classification === "Security") {
-                            this.columns.map((column: IGridColumn) => {
-                                if (column.dataField === "Asset Class") {
-                                    column.groupIndex = 0;
-                                    column.visible = false;
-                                } else if (column.dataField === "Security") {
-                                    column.visible = true;
-                                    column.caption = "Name";
-                                    column.groupIndex = -1;
-                                } else if (column.dataField === "Security Type") {
-                                    column.visible = false;
-                                    column.groupIndex = 1;
-                                }
-                            });
-                        }
-                        this.gridData = appraisalData.filter((item: any) => item.Security !== "");
-                    }
-
-                    this.summaries.map((summary: IGridColumnSummary) => {
-                        if (summary.column === "Asset Class") {
-                            summary.column = "Security";
-                            summary.customizeText = customizeSummaryText;
-                        }
-                    });
-
-                    let security: any = this.groupSummaries.find((summary: IGridColumnSummary) => summary.column === "Security");
-                    if (!security) {
-                        let groupSummary: IGridColumnSummary = {};
-                        groupSummary.customizeText = customizeGroupText;
-                        groupSummary.column = "Security";
-                        groupSummary.showInGroupFooter = true;
-                        this.groupSummaries.push(groupSummary);
-                    }
-                }
-
-                if (hasSecurityType === 0) {
-                    if (this.overlayOptions.classification === "Security") {
-                        this.columns.map((column: IGridColumn) => {
-                            if (column.dataField === "Asset Class") {
-                                column.groupIndex = -1;
-                                column.visible = false;
-                            } else if (column.dataField === "Security") {
-                                column.visible = true;
-                                column.caption = "Name";
-                            } else if (column.dataField === "Security Type") {
-                                column.visible = false;
-                                column.groupIndex = 0;
-                            }
-                        });
-                    }
-                    else if (this.overlayOptions.classification === "Asset Class") {
-                        this.columns.map((column: IGridColumn) => {
-                            if (column.dataField === "Asset Class") {
-                                column.groupIndex = 1;
-                                column.visible = false;
-                            } else if (column.dataField === "Security") {
-                                column.visible = true;
-                                column.caption = "Name";
-                            } else if (column.dataField === "Security Type") {
-                                column.visible = false;
-                                column.groupIndex = 0;
-                            }
-                        });
-                    }
-                    this.summaries.map((summary: IGridColumnSummary) => {
-                        if (summary.column === "Security Type") {
-                            summary.column = "Security";
-                            summary.customizeText = customizeSummaryText;
-                        }
-                    });
-
-                    let security: any = this.groupSummaries.find((summary: IGridColumnSummary) => summary.column === "Security");
-                    if (!security) {
-                        let groupSummary: IGridColumnSummary = {};
-                        groupSummary.customizeText = customizeGroupText;
-                        groupSummary.column = "Security";
-                        groupSummary.showInGroupFooter = true;
-                        this.groupSummaries.push(groupSummary);
-                    }
-                    this.gridData = appraisalData.filter((item: any) => item.Security !== "");
-                }
-
-                if (hasSecurity === 0) {
-                    if (this.overlayOptions.classification === "Security Type") {
-                        this.columns.map((column: IGridColumn) => {
-                            if (column.dataField === "Asset Class") {
-                                column.groupIndex = -1;
-                                column.visible = false;
-                            } else if (column.dataField === "Security") {
-                                column.visible = false;
-                                column.groupIndex = 0;
-                            } else if (column.dataField === "Security Type") {
-                                column.visible = true;
-                                column.caption = "Name";
-                            }
-                        });
-                    }
-                    else if (this.overlayOptions.classification === "Asset Class") {
-                        this.columns.map((column: IGridColumn) => {
-                            if (column.dataField === "Asset Class") {
-                                column.groupIndex = -1;
-                                column.visible = true;
-                                column.caption = "Name";
-                            } else if (column.dataField === "Security") {
-                                column.visible = false;
-                                column.groupIndex = 0;
-                            } else if (column.dataField === "Security Type") {
-                                column.visible = false;
-                                column.groupIndex = -1;
-                            }
-                        });
-                    }
-                    this.summaries.map((summary: IGridColumnSummary) => {
-                        if (summary.customizeText === customizeSummaryText) {
-                            summary.column = this.overlayOptions.classification;
-                            summary.customizeText = customizeSummaryText;
-                        }
-                    });
-                    console.info(this.groupSummaries);
-
-                    let security: any = this.groupSummaries.find((summary: IGridColumnSummary) => summary.column === this.overlayOptions.classification);
-                    if (!security) {
-                        let groupSummary: IGridColumnSummary = {};
-                        groupSummary.customizeText = customizeGroupText;
-                        groupSummary.column = this.overlayOptions.classification;
-                        groupSummary.showInGroupFooter = true;
-                        this.groupSummaries.push(groupSummary);
-                    }
-                    this.gridData = appraisalData.filter((item: any) => item.Security !== "");
-                }
-
-                
-
-                if (this.mode === "add") {
-                    this.dsClassifications.push({
-                        selector: "r-textbox",
-                        options: {
-                            name: this.overlayOptions.classification,
-                            value: this.overlayOptions.classification,
-                            type: "classification",
-                            className: "tb",
-                            editClassName: "tb-edit"
-                        }
-                    });
-
-                } else if (this.mode === "edit") {
-                    this.dsClassifications.map((item: any) => {
-                        if (item.options.name === this.overlayOptions.orginalName) {
-                            item.options.name = this.overlayOptions.classification;
-                            item.options.value = this.overlayOptions.classification;
-                        }
-                    });
-                }
-
-                this.options.children[0].options.data = this.gridData;
-                this.options.children[0].options.columns = this.columns;
-                this.options.children[0].options.summaries = this.summaries;
-                this.options.children[0].options.groupSummaries = this.groupSummaries;
-                this.tOptions.classic.children = this.dsClassifications;
-            }
-        }
         this.overlay.hide();
     }
 
     onTextboxAdd(event: MouseEvent, type: string) {
         this.classiMenus = [];
-        this.mode = "add";
-        if (type === "classification") {
+        this.mode = ActionModes.Add;
+
+        if (type === DataSourceTypes.Classification) {
             this.addClassficationItems();
             this.overlayOptions = {
                 title: "Add Classification",
                 tempTitle: "Add Classification",
                 items: this.classiMenus,
-                type: "classification",
+                type: type,
                 secondary: {
                     children: []
                 }
             };
-        } else if (type === "column") {
+        }
+
+        else if (type === DataSourceTypes.Column) {
             this.addColumnItems();
             this.overlayOptions = {
                 title: "Add Column",
                 tempTitle: "Add Column",
                 items: this.classiMenus,
-                type: "column",
+                type: type,
                 secondary: {
                     children: []
                 }
             };
+        }
+
+        else if (type === DataSourceTypes.Configuration) {
+
         }
         this.render2.setStyle(this.eleRef.nativeElement.querySelector(".ui-overlaypanel"), "marginLeft", "-20em");
         this.overlay.toggle(event);
@@ -811,16 +602,21 @@ export class ReportingComponent implements OnInit {
 
     onTextboxEdit(options: ITextBox, level?: string) {
         this.classiMenus = [];
-        this.mode = "edit";
-        if (options.type === "classification") {
+        this.mode = ActionModes.Edit;
+
+        if (options.type === DataSourceTypes.Classification) {
             this.overlayOptions.orginalName = options.name;
             this.setClassficationDetails(options.name);
-        } else if (options.type === "column") {
+        }
+        else if (options.type === DataSourceTypes.Column) {
             if (options.grouped) {
                 this.setGroupDetais(options.value, options.name);
             } else {
                 this.setColumnDetails(options.name);
             }
+        }
+        else if (options.type === DataSourceTypes.Configuration) {
+
         }
 
         this.render2.setStyle(this.eleRef.nativeElement.querySelector(".ui-overlaypanel"), "marginLeft", "-18.2em");
@@ -832,14 +628,24 @@ export class ReportingComponent implements OnInit {
             return;
         }
         this.classiMenus = [];
-        this.mode = "group";
+        this.mode = ActionModes.Group;
         this.setGroupDetais();
         this.render2.setStyle(this.eleRef.nativeElement.querySelector(".ui-overlaypanel"), "marginLeft", "-18.2em");
         this.overlay.toggle(event);
     }
 
     onTextboxRemove(options: ITextBox) {
-        if (options.type === "column") {
+        this.mode = ActionModes.Remove;
+        if (options.type === DataSourceTypes.Classification) {
+            this.removeClassification(options.name);
+            
+            this.options.children[0].options.data = this.gridData;
+            this.options.children[0].options.columns = this.columns;
+            this.options.children[0].options.summaries = this.summaries;
+            this.options.children[0].options.groupSummaries = [];
+            this.tOptions.classic.children = this.dsClassifications;
+        }
+        else if (options.type === DataSourceTypes.Column) {
             if (options.level === "top") {
                 this.columns.map((column: IGridColumn) => {
                     if (column.dataField === options.name) {
@@ -890,146 +696,6 @@ export class ReportingComponent implements OnInit {
             }
             this.options.children[0].options.columns = this.columns;
             this.tOptions.column.children = this.dsColumns;
-        }
-
-        else if (options.type === "classification") {
-            if (this.dsClassifications.length === 1) {
-                return;
-            }
-            let hasAsset: number = this.dsClassifications.findIndex((textbox: any) => textbox.options.name === "Asset Class");
-            let hasSecurityType: number = this.dsClassifications.findIndex((textbox: any) => textbox.options.name === "Security Type");
-            let hasSecurity: number = this.dsClassifications.findIndex((textbox: any) => textbox.options.name === "Security");
-
-            if (hasAsset === 0) {
-                if (options.name === "Asset Class") {
-                    return;
-                }
-                if (this.dsClassifications.length === 2) {
-                    this.columns.map((column: IGridColumn) => {
-                        if (column.dataField === "Asset Class") {
-                            column.caption === "Name";
-                            column.visible = true;
-                            column.groupIndex = -1;
-                        } else if (column.dataField === "Security Type") {
-                            column.groupIndex = -1;
-                            column.visible = false;
-                        } else if (column.dataField === "Security") {
-                            column.visible = false;
-                        }
-                    });
-                    this.summaries.map((summary: IGridColumnSummary) => {
-                        if (summary.column === "Security" || summary.column === "Security Type") {
-                            summary.column = "Asset Class";
-                            summary.customizeText = customizeSummaryText;
-                        }
-                    });
-                    this.gridData = appraisalData.filter((item: any) => item["Security Type"] === "" && item.Security === "");
-                }
-
-                else if (this.dsClassifications.length === 3) {
-                    if (options.name === "Security") {
-                        this.columns.map((column: IGridColumn) => {
-                            if (column.dataField === "Asset Class") {
-                                column.visible = false;
-                                column.groupIndex = 0;
-                            } else if (column.dataField === "Security Type") {
-                                column.groupIndex = -1;
-                                column.visible = true;
-                                column.caption === "Name";
-                            } else if (column.dataField === "Security") {
-                                column.visible = false;
-                            }
-                        });
-                        this.summaries.map((summary: IGridColumnSummary) => {
-                            if (summary.column === "Security") {
-                                summary.column = "Security Type";
-                                summary.customizeText = customizeSummaryText;
-                            }
-                        });
-                        this.gridData = appraisalData.filter((item: any) => item["Security Type"] !== "" && item.Security === "");
-                    }
-                    else if (options.name === "Security Type") {
-                        this.columns.map((column: IGridColumn) => {
-                            if (column.dataField === "Asset Class") {
-                                column.visible = false;
-                                column.groupIndex = 0;
-                            } else if (column.dataField === "Security Type") {
-                                column.groupIndex = -1;
-                                column.visible = false;
-                            } else if (column.dataField === "Security") {
-                                column.visible = true;
-                                column.caption === "Name";
-                            }
-                        });
-                        this.summaries.map((summary: IGridColumnSummary) => {
-                            if (summary.column === "Security") {
-                                summary.column = "Security";
-                                summary.customizeText = customizeSummaryText;
-                            }
-                        });
-                        this.gridData = appraisalData.filter((item: any) => item.Security !== "");
-                    }
-                }
-
-
-            }
-
-            if (hasSecurityType === 0) {
-                if (options.name !== "Security Type") {
-                    this.columns.map((column: IGridColumn) => {
-                        if (column.dataField === "Asset Class") {
-                            column.visible = false;
-                            column.groupIndex = -1;
-                        } else if (column.dataField === "Security Type") {
-                            column.groupIndex = -1;
-                            column.visible = true;
-                            column.caption === "Name";
-                        } else if (column.dataField === "Security") {
-                            column.visible = false;
-                        }
-                    });
-                    this.summaries.map((summary: IGridColumnSummary) => {
-                        if (summary.column === "Security") {
-                            summary.column = "Security Type";
-                            summary.customizeText = customizeSummaryText;
-                        }
-                    });
-                    this.gridData = appraisalData.filter((item: any) => item["Security Type"] !== "" && item.Security === "");
-                }
-            }
-
-            if (hasSecurity === 0) {
-                if (options.name !== "Security") {
-                    this.columns.map((column: IGridColumn) => {
-                        if (column.dataField === "Asset Class") {
-                            column.visible = false;
-                            column.groupIndex = -1;
-                        } else if (column.dataField === "Security Type") {
-                            column.visible = false;
-                            column.groupIndex = -1;
-                        } else if (column.dataField === "Security") {
-                            column.visible = true;
-                            column.groupIndex = -1;
-                            column.caption === "Name";
-                        }
-                    });
-                    this.summaries.map((summary: IGridColumnSummary) => {
-                        if (summary.customizeText === customizeSummaryText) {
-                            summary.column = "Security";
-                            summary.customizeText = customizeSummaryText;
-                        }
-                    });
-                    this.gridData = appraisalData.filter((item: any) => item.Security !== "");
-                }
-            }
-            this.dsClassifications = this.dsClassifications.filter((widget: any) => widget.options.name !== options.name);
-            this.options.children[0].options.data = this.gridData;
-            this.options.children[0].options.columns = this.columns;
-            this.options.children[0].options.summaries = this.summaries;
-            this.options.children[0].options.groupSummaries = [];
-            this.tOptions.classic.children = this.dsClassifications;
-
-            console.warn(this.summaries);
         }
     }
 
@@ -1201,149 +867,54 @@ export class ReportingComponent implements OnInit {
                 column.visible = true;
             }
 
-            if (key === "Asset Class" || key === "Security" || key === "Security Type") {
+            if (key === Classifications.AssetClass || key === Classifications.SecurityType || key === Classifications.Security) {
                 column.allowShowInMenu = false;
+                column.isClassification = true;
             } else {
                 column.allowShowInMenu = true;
+                column.isClassification = false;
             }
             column.allowSort = false;
             this.columns.push(column);
         });
+
+        let summary: IGridColumnSummary = {};
+        summary.customizeText = customizeSummaryText;
+        summary.column = Classifications.AssetClass;
+        this.summaries.push(summary);
+
+        let groupSummary: IGridColumnSummary = {};
+        groupSummary.customizeText = customizeGroupText;
+        groupSummary.column = Classifications.AssetClass;
+        groupSummary.showInGroupFooter = true;
+        this.groupSummaries.push(groupSummary);
     }
 
     parseColumn(type?: string): void {
         // Group by AssetClass, then by SecurityType
         if (type.includes("Table1")) {
-            this.columns[0].groupIndex = 0;
-            this.columns[0].visible = false;
-            this.columns[1].groupIndex = 1;
-            this.columns[1].visible = false;
-            this.columns[2].caption = "Name";
-
-            let summary: IGridColumnSummary = {};
-            summary.customizeText = customizeSummaryText;
-            summary.column = this.columns[2].dataField;
-            this.summaries.push(summary);
-
-            let groupSummary: IGridColumnSummary = {};
-            groupSummary.customizeText = customizeGroupText;
-            groupSummary.column = this.columns[2].dataField;
-            groupSummary.showInGroupFooter = true;
-            this.groupSummaries.push(groupSummary);
-
-            this.gridData = appraisalData.filter((item: any) => item.Security !== "");
-
-            this.dsClassifications.push({
-                selector: "r-textbox",
-                options: {
-                    name: "Asset Class",
-                    value: "Asset Class",
-                    type: "classification",
-                    className: "tb",
-                    editClassName: "tb-edit"
-                }
-            });
-
-            this.dsClassifications.push({
-                selector: "r-textbox",
-                options: {
-                    name: "Security Type",
-                    value: "Security Type",
-                    type: "classification",
-                    className: "tb",
-                    editClassName: "tb-edit"
-                }
-            });
-
-            this.dsClassifications.push({
-                selector: "r-textbox",
-                options: {
-                    name: "Security",
-                    value: "Security",
-                    type: "classification",
-                    className: "tb",
-                    editClassName: "tb-edit"
-                }
-            });
+            this.addClassification(Classifications.AssetClass);
+            this.addClassification(Classifications.SecurityType);
+            this.addClassification(Classifications.Security);
         }
 
         // Group by Asset Class
         else if (type.includes("Table2")) {
-            this.columns[0].caption = "Name";
-            this.columns[1].visible = false;
-            this.columns[2].visible = false;
-
-            let summary: IGridColumnSummary = {};
-            summary.customizeText = customizeSummaryText;
-            summary.column = this.columns[0].dataField;
-            this.summaries.push(summary);
-
-            this.gridData = appraisalData.filter((item: any) => item["Security Type"] === "" && item.Security === "");
-
-            this.dsClassifications.push({
-                selector: "r-textbox",
-                options: {
-                    name: "Asset Class",
-                    value: "Asset Class",
-                    type: "classification",
-                    className: "tb",
-                    editClassName: "tb-edit"
-                }
-            });
+            this.addClassification(Classifications.AssetClass);
         }
 
         // Group by Security Type
         else if (type.includes("Table3")) {
-            this.columns[0].visible = false;
-            this.columns[1].caption = "Name";
-            this.columns[2].visible = false;
-
-            let summary: IGridColumnSummary = {};
-            summary.customizeText = customizeSummaryText;
-            summary.column = this.columns[1].dataField;
-            this.summaries.push(summary);
-
-            this.gridData = appraisalData.filter((item: any) => item["Security Type"] !== "" && item.Security === "");
-
-            this.dsClassifications.push({
-                selector: "r-textbox",
-                options: {
-                    name: "Security Type",
-                    value: "Security Type",
-                    type: "classification",
-                    className: "tb",
-                    editClassName: "tb-edit"
-                }
-            });
+            this.addClassification(Classifications.SecurityType);
         }
 
         // Group by Security
         else if (type.includes("Table4")) {
-            this.columns[0].visible = false;
-            this.columns[1].visible = false;
-            this.columns[2].caption = "Name";
-
-            let summary: IGridColumnSummary = {};
-            summary.customizeText = customizeSummaryText;
-            summary.column = this.columns[2].dataField;
-            this.summaries.push(summary);
-
-            this.gridData = appraisalData.filter((item: any) => item.Security !== "");
-
-            this.dsClassifications.push({
-                selector: "r-textbox",
-                options: {
-                    name: "Security",
-                    value: "Security",
-                    type: "classification",
-                    className: "tb",
-                    editClassName: "tb-edit"
-                }
-            });
+            this.addClassification(Classifications.Security);
         }
 
         this.columns.map((item: IGridColumn) => {
-            if (item.visible && item.caption !== "Name") {
+            if (item.visible && !item.isClassification) {
                 this.dsColumns.push({
                     selector: "r-textbox",
                     options: {
@@ -1360,8 +931,186 @@ export class ReportingComponent implements OnInit {
         });
     }
 
+    addClassification(type: string, mode: string = ActionModes.Add) {
+        let isExisted: RTextbox = this.dsClassifications.find((tx: RTextbox) => type === tx.options.name);
+        if (isExisted) {
+            return;
+        }
+        let orginalIndex: number = 1;
+
+        if (mode === ActionModes.Add) {
+            this.columns.map((col: IGridColumn) => {
+                if (col.dataField === type) {
+                    col.visible = true;
+                    col.groupIndex = -1;
+                    col.caption = Caption;
+                }
+                if (col.isClassification && col.dataField !== type) {
+                    col.visible = false;
+                    col.groupIndex = this.dsClassifications.findIndex((tx: RTextbox) => col.dataField === tx.options.name);
+                }
+            });
+        }
+
+        else if (mode === ActionModes.Edit) {
+            this.columns.map((col: IGridColumn) => {
+                if (col.dataField === this.overlayOptions.orginalName) {
+                    col.visible = false;
+                    col.groupIndex = -1;
+                }
+                if (col.dataField === type) {
+                    col.visible = true;
+                    orginalIndex = this.dsClassifications.findIndex((tx: RTextbox) => this.overlayOptions.orginalName === tx.options.name);
+                    col.groupIndex = (orginalIndex || this.dsClassifications.length === 1) ? -1 : 0;
+                    col.caption = (orginalIndex || this.dsClassifications.length === 1) ? Caption : col.caption;
+                }
+            });
+        }
+
+        this.summaries.map((sum: IGridColumnSummary) => {
+            if (sum.customizeText === customizeSummaryText && (orginalIndex || this.dsClassifications.length === 1)) {
+                sum.column = type;
+            }
+        });
+
+        this.groupSummaries.map((sum: IGridColumnSummary) => {
+            if (sum.customizeText === customizeGroupText && (orginalIndex || this.dsClassifications.length === 1)) {
+                sum.column = type;
+            }
+        })
+
+
+        if (mode === ActionModes.Add) {
+            if (this.dsClassifications.length === 0) {
+                this.gridData = this.fetchData(type);
+            } else {
+                this.gridData = this.fetchData(Classifications.Security);
+            }
+
+            this.dsClassifications.push({
+                selector: "r-textbox",
+                options: {
+                    name: type,
+                    value: type,
+                    type: DataSourceTypes.Classification,
+                    className: TEXTBOX_CLASSNAME,
+                    editClassName: TEXTBOX_EDIT_CLASSNAME
+                }
+            });
+        }
+        else if (mode === ActionModes.Edit) {
+            if (this.dsClassifications.length === 1) {
+                this.gridData = this.fetchData(type);
+            } else {
+                this.gridData = this.fetchData(Classifications.Security);
+            }
+
+            this.dsClassifications.map((item: RTextbox) => {
+                if (item.options.name === this.overlayOptions.orginalName) {
+                    item.options.name = this.overlayOptions.classification;
+                    item.options.value = this.overlayOptions.classification;
+                }
+            });
+        }
+    }
+
+    removeClassification(type: string) {
+        let remainType: string = "";
+        this.columns.map((col: IGridColumn) => {
+            if (col.isClassification) {
+                if (this.dsClassifications.length === 1) {
+                    col.groupIndex = -1;
+                    col.caption = col.dataField;
+                    col.visible = true;
+                    remainType = Classifications.AssetClass;
+                } 
+                else {
+                    if (col.dataField === type) {
+                        col.groupIndex = -1;
+                        col.caption = type;
+                        col.visible = false; 
+                    } 
+                    else {
+                        let removedIndex: number = this.dsClassifications.findIndex((tx: RTextbox) => tx.options.name === type);
+                        let index: number = this.dsClassifications.findIndex((tx: RTextbox) => tx.options.name === col.dataField);
+                        if (this.dsClassifications.length === 2) { 
+                            col.groupIndex = -1;
+                            col.caption = index > -1 ? Caption : col.dataField;
+                            col.visible = index > -1;
+                            if (index > -1) {
+                                remainType = col.dataField;
+                            }
+                        } 
+                        if (this.dsClassifications.length === 3) {
+                            if (removedIndex === 0) {
+                                if (index === 1) {
+                                    col.groupIndex = 0;
+                                    col.caption = col.dataField;
+                                    col.visible = false;
+                                } 
+                                if (index === 2) {
+                                    col.groupIndex = -1;
+                                    col.caption = Caption;
+                                    col.visible = true;
+                                    remainType = col.dataField;
+                                }
+                            }
+
+                            if (removedIndex === 1) {
+                                if (index === 2) {
+                                    col.groupIndex = -1;
+                                    col.caption = Caption;
+                                    col.visible = true;
+                                    remainType = col.dataField;
+                                }
+                            }
+
+                            if (removedIndex === 2) {
+                                if (index === 1) {
+                                    col.groupIndex = -1;
+                                    col.caption = Caption;
+                                    col.visible = true;
+                                    remainType = col.dataField;
+                                }
+                            }
+                        } 
+                    }
+                }
+            }      
+        });
+
+        this.summaries.map((sum: IGridColumnSummary) => {
+            if (sum.customizeText === customizeSummaryText) {
+                sum.column = remainType;
+            }
+        });
+
+        this.groupSummaries.map((sum: IGridColumnSummary) => {
+            if (sum.customizeText === customizeGroupText) {
+                sum.column = remainType;
+            }
+        })
+
+        this.dsClassifications = this.dsClassifications.filter((tx: RTextbox) => tx.options.name !== type);
+        if (this.dsClassifications.length === 1) {
+            this.gridData = this.fetchData(remainType);
+        } else {
+            this.gridData = this.fetchData(Classifications.Security);
+        }
+    }
+
+    fetchData(type: string): Array<any> {
+        if (type === Classifications.AssetClass) {
+            return appraisalData.filter((item: any) => item[Classifications.SecurityType] === "" && item[Classifications.Security] === "");
+        } else if (type === Classifications.SecurityType) {
+            return appraisalData.filter((item: any) => item[Classifications.SecurityType] !== "" && item[Classifications.Security] === "");
+        } else if (type === Classifications.Security) {
+            return appraisalData.filter((item: any) => item[Classifications.Security] !== "");
+        }
+        return [];
+    }
+
     addGrid(event: any): void {
-        console.info(event);
         let label: string = event.item.label;
         if (!label) {
             return;
@@ -1426,10 +1175,25 @@ export class ReportingComponent implements OnInit {
         this.tOptions.column.children = [];
         this.groupItems = [];
     }
+
+    onAfterHide() {
+        this.overlayOptions = {
+            title: "",
+            tempTitle: "",
+            type: "",
+            column: "",
+            classification: "",
+            items: [],
+            secondary: {
+                children: []
+            }
+        };
+        this.selectedListItem = null;
+    }
 }
 
 function customizeGroupText(item) {
-    return "Total";
+    return "Total Group";
 }
 
 function customizeSummaryText() {
@@ -1442,6 +1206,58 @@ function customizeSummaryResult(item) {
 
 function parseNumber(value: number): string {
     return value === Math.floor(value) ? value.toLocaleString() : Number(value.toFixed(1)).toLocaleString();
+}
+
+
+export const Classifications: Classification = {
+    AssetClass: "Asset Class",
+    SecurityType: "Security Type",
+    Security: "Security",
+    Type: "classification"
+};
+
+export const DataSourceTypes: DataSourceType = {
+    Classification: "classification",
+    Column: "column",
+    Configuration: "configuration"
+};
+
+export const ActionModes: ActionMode = {
+    Add: "add",
+    Edit: "edit",
+    Group: "group",
+    Remove: "remove"
+};
+
+export const Caption: string = "Name";
+export const TEXTBOX_CLASSNAME: string = "tb";
+export const TEXTBOX_EDIT_CLASSNAME: string = "tb-edit";
+export const Clasifis: string[] = [Classifications.AssetClass, Classifications.Security, Classifications.Security];
+export const COLUMNS: string[] = ["Asset Class", "Security Type", "Security", "Quantity", "Unit Cost", "Price", "Total Cost", "Market Value", "% Asset"];
+
+export interface Classification {
+    AssetClass?: string;
+    SecurityType?: string;
+    Security?: string;
+    Type?: string;
+}
+
+export interface DataSourceType {
+    Classification?: string;
+    Column?: string;
+    Configuration?: string;
+}
+
+export interface RTextbox {
+    selector: string;
+    options: ITextBox;
+}
+
+export interface ActionMode {
+    Add?: string;
+    Edit?: string;
+    Group?: string
+    Remove?: string;
 }
 
 const classifications: any = [
@@ -1615,5 +1431,4 @@ const appraisalData: any[] = [
     { "Asset Class": "Cash", "Security Type": "Cash Accounts", "Security": "Dividend Accrual (usd)", "Quantity": "NULL", "Unit Cost": "NULL", "Price": "NULL", "Total Cost": "-11138.55", "Market Value": "-11138.55", "% Asset": "-0.096337698" },
     { "Asset Class": "Cash", "Security Type": "Cash Accounts", "Security": "U.S. DOLLAR", "Quantity": "NULL", "Unit Cost": "NULL", "Price": "NULL", "Total Cost": "1597605.28", "Market Value": "1597605.28", "% Asset": "13.81774239" }
 ];
-
 

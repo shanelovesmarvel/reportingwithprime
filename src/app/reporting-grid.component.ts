@@ -254,6 +254,7 @@ export interface IGridColumn {
     headerFilter?: any;
     hidingPriority?: number;
     isBand?: boolean;
+    isClassification?: boolean;
     lookup?: any;
     minWidth?: number;
     name?: string;  //specify the idenifier of the column.
