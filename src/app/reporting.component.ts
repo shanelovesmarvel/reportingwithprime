@@ -55,9 +55,7 @@ import { DragulaService } from 'ng2-dragula';
                 </p-tree>
             </div>
             <div class="r-editors">
-                <div class="paper" 
-                    pDroppable="grids"
-                    [dropEffect]="'move'">
+                <div class="paper">
                     <ng-container *ngFor="let opt of options.children">
                         <r-grid *ngIf="opt.selector === 'r-grid' " [options]="opt.options">
                         </r-grid>
@@ -75,7 +73,9 @@ import { DragulaService } from 'ng2-dragula';
                                 (click)="onTextboxAdd($event, 'classification')">
                             </span>
                         </div>
-                        <div class="r-content">
+                        <div class="r-content" 
+                            [dragula]="'classification'"
+                            [dragulaModel]="tOptions.classic.children">
                             <ng-container *ngFor="let opt of tOptions.classic.children">
                                 <r-textbox *ngIf="opt.selector === 'r-textbox' " 
                                     [options]="opt.options" 
@@ -97,7 +97,7 @@ import { DragulaService } from 'ng2-dragula';
                             </div>
                         </div>
                         <div class="r-content">
-                            <ul class="outer" [dragula]="'textbox'" 
+                            <ul class="outer" [dragula]="'column'" 
                                 [dragulaModel]="tOptions.column.children">
                                 <li *ngFor="let opt of tOptions.column.children">
                                     <r-textbox  *ngIf="opt.selector === 'r-textbox' "
@@ -315,7 +315,13 @@ export class ReportingComponent implements OnInit {
         this.parseData();
 
         this.dragulaService.drop.subscribe((value: Array<any>) => {
-            this.resortColumn();
+            console.warn(value);
+            if (value[0] === "column") {
+                this.resortColumn();
+            }
+            else if (value[0] === "classification") {
+                this.reorderClassification();
+            }
         });
     }
 
@@ -1137,6 +1143,63 @@ export class ReportingComponent implements OnInit {
         } else {
             this.gridData = this.fetchData(Classifications.Security);
         }
+    }
+
+    reorderClassification() {
+        let orders: Array<string> = this.tOptions.classic.children.map((tx: RTextbox) => {
+            return tx.options.name;
+        });
+        let currentType: string = Classifications.AssetClass;
+        this.columns.map((col: IGridColumn) => {
+            if (col.isClassification) {
+                if (orders.length === 2) {
+                    if (col.dataField === orders[0]) {
+                        col.groupIndex = 0;
+                        col.caption = col.dataField;
+                        col.visible = false;
+                    } 
+                    else if (col.dataField === orders[1]) {
+                        col.groupIndex = -1;
+                        col.caption = Caption;
+                        col.visible = true;
+                        currentType = col.dataField;
+                    }
+                }
+                if (orders.length === 3) {
+                    if (col.dataField === orders[0]) {
+                        col.groupIndex = 0;
+                        col.caption = col.dataField;
+                        col.visible = false;
+                    } 
+                    else if (col.dataField === orders[1]) {
+                        col.groupIndex = 1;
+                        col.caption = col.dataField;
+                        col.visible = false;
+                    }
+                    else if (col.dataField === orders[2]) {
+                        col.groupIndex = -1;
+                        col.caption = Caption;
+                        col.visible = true;
+                        currentType = col.dataField;
+                    }
+                }
+            }
+            
+        });
+        this.summaries.map((sum: IGridColumnSummary) => {
+            if (sum.customizeText === customizeSummaryText) {
+                sum.column = currentType;
+            }
+        });
+
+        this.groupSummaries.map((sum: IGridColumnSummary) => {
+            if (sum.customizeText === customizeGroupText) {
+                sum.column = currentType;
+            }
+        });
+        this.options.children[0].options.columns = this.columns;
+        this.options.children[0].options.summaries = this.summaries;
+        this.options.children[0].options.groupSummaries = this.groupSummaries;
     }
 
     fetchData(type: string): Array<any> {

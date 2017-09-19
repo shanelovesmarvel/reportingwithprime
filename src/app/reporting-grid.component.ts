@@ -4,33 +4,7 @@ import { ResizeEvent } from 'angular-resizable-element';
 @Component({
     selector: 'r-grid',
     template: `
-        <div class="r-grid" 
-            mwlResizable
-            pDraggable="grids"
-            [dragEffect]="'move'"
-            dragHandle=".r-grid"
-            (onDragStart)="dragStart($event)"
-            (onDrag)="drag($event)" 
-            (onDragEnd)="dragEnd($event)"
-            [ngStyle]="containerStyle" 
-            [enableGhostResize]="true"
-            [resizeEdges]="{bottom: true, right: true, top: true, left: true}"
-            [resizeSnapGrid]="{left: 50, right: 50}"
-            [validateResize]="validate"
-            (resizeEnd)="onResizeEnd($event)">
-            <p-dataTable *ngIf="false"
-                [value]="data" 
-                draggable="false" 
-                scrollable="true" 
-                scrollHeight="200px">
-                <p-column *ngFor="let col of columns"
-                    [field]="col.field"
-                    [header]="col.header"
-                    [sortable]="col.sortable"
-                    [sortField]="col.sortField"
-                    [footer]="col.footer">
-                </p-column>
-            </p-dataTable>
+        <div class="r-grid">
             <dx-data-grid
                 id="r-grid"
                 draggable="false"
