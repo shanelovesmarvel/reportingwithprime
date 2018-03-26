@@ -1,6 +1,8 @@
 /* You can add global styles to this file, and also import other style files */
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
 
+@import "shane";
+
 body {
     overflow: hidden;
 }
@@ -75,6 +77,14 @@ p-menu > .ui-menu {
 .dx-datagrid-rowsview .dx-state-hover.dx-row:not(.dx-row-lines) > td {
     background-color: #3BBFD5 !important;
     color: whitesmoke !important;
+}
+
+.dx-datagrid-drag-header {
+    display: none;
+}
+
+#r-grid > div > div.dx-datagrid-rowsview.dx-scrollable.dx-scrollable-customizable-scrollbars.dx-scrollable-both.dx-scrollable-simulated.dx-visibility-change-handler {
+    height: 100% !important;
 }
 
 #r-grid {

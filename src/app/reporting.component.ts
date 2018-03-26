@@ -4,6 +4,693 @@ import { IGridColumn, IGridColumnSummary } from './reporting-grid.component';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ITextBox } from './reporting-textbox.component';
 import { DragulaService } from 'ng2-dragula';
+import { Observable } from 'rxjs';
+import * as JsReport from 'jsreport-browser-client-dist';
+
+const content1: string = `
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+<title>Advent Browser Reporting - Summary</title>
+<style type="text/css" media=print>
+<!--
+    tr.S0-FirmName { font-size: 11pt; font-family: "Calibri"; font-weight: normal; font-style: normal; text-decoration: none; page-break-before: avoid; page-break-after: avoid; }
+    tr.S0-RepTitle { font-size: 14pt; font-family: "Calibri"; font-weight: normal; font-style: normal; text-decoration: none; page-break-before: avoid; page-break-after: avoid; }
+    tr.S0-PortName { font-size: 12pt; font-family: "Calibri"; font-weight: bold; font-style: italic; text-decoration: none; page-break-before: avoid; page-break-after: avoid; }
+    tr.S0-Date { font-size: 10pt; font-family: "Calibri"; font-weight: normal; font-style: italic; text-decoration: none; page-break-before: avoid; page-break-after: avoid; }
+    tr.S0-ColHeader { font-size: 8pt; font-family: "Calibri"; font-weight: bold; font-style: normal; text-decoration: none; page-break-before: avoid; page-break-after: avoid; }
+    tr.S0-SectHeader { font-size: 8pt; font-family: "Calibri"; font-weight: bold; font-style: normal; text-decoration: none; page-break-before: auto; page-break-after: avoid; }
+    tr.S0-Header { font-size: 10pt; font-family: "Calibri"; font-weight: bold; font-style: normal; text-decoration: none; page-break-before: auto; page-break-after: avoid; }
+    tr.S0-Detail { font-size: 8pt; font-family: "Calibri"; font-weight: normal; font-style: normal; text-decoration: none; page-break-before: auto; page-break-after: auto; }
+    tr.S0-UnderLine { line-height: 0%; page-break-before: avoid; page-break-after: avoid; }
+    tr.S0-SectSubtotal { font-size: 8pt; font-family: "Calibri"; font-weight: normal; font-style: normal; text-decoration: none; page-break-before: avoid; page-break-after: auto; }
+    tr.S0-GrandTotal { font-size: 8pt; font-family: "Calibri"; font-weight: bold; font-style: normal; text-decoration: none; page-break-before: avoid; page-break-after: auto; }
+    tr.S0-Warning { font-size: 8pt; font-family: "Calibri"; font-weight: bold; font-style: italic; text-decoration: none; page-break-before: avoid; page-break-after: avoid; }
+    tr.S0-Footnote { font-size: 8pt; font-family: "Calibri"; font-weight: normal; font-style: normal; text-decoration: none; page-break-before: avoid; page-break-after: avoid; }
+    tr.S0-Footer { font-size: 8pt; font-family: "Calibri"; font-weight: normal; font-style: normal; text-decoration: none; page-break-before: avoid; page-break-after: avoid; }
+-->
+</style>
+<style type="text/css" media=screen>
+<!--
+    tr.S0-FirmName { font-size: 138%; font-family: "Calibri"; font-weight: normal; font-style: normal; text-decoration: none;  }
+    tr.S0-RepTitle { font-size: 175%; font-family: "Calibri"; font-weight: normal; font-style: normal; text-decoration: none;  }
+    tr.S0-PortName { font-size: 150%; font-family: "Calibri"; font-weight: bold; font-style: italic; text-decoration: none;  }
+    tr.S0-Date { font-size: 125%; font-family: "Calibri"; font-weight: normal; font-style: italic; text-decoration: none;  }
+    tr.S0-ColHeader { font-size: 100%; font-family: "Calibri"; font-weight: bold; font-style: normal; text-decoration: none;  }
+    tr.S0-SectHeader { font-size: 100%; font-family: "Calibri"; font-weight: bold; font-style: normal; text-decoration: none;  }
+    tr.S0-Header { font-size: 125%; font-family: "Calibri"; font-weight: bold; font-style: normal; text-decoration: none;  }
+    tr.S0-Detail { font-size: 100%; font-family: "Calibri"; font-weight: normal; font-style: normal; text-decoration: none;  }
+    tr.S0-UnderLine { line-height: 0%; page-break-before: avoid; page-break-after: avoid; }
+    tr.S0-SectSubtotal { font-size: 100%; font-family: "Calibri"; font-weight: normal; font-style: normal; text-decoration: none;  }
+    tr.S0-GrandTotal { font-size: 100%; font-family: "Calibri"; font-weight: bold; font-style: normal; text-decoration: none;  }
+    tr.S0-Warning { font-size: 100%; font-family: "Calibri"; font-weight: bold; font-style: italic; text-decoration: none;  }
+    tr.S0-Footnote { font-size: 100%; font-family: "Calibri"; font-weight: normal; font-style: normal; text-decoration: none;  }
+    tr.S0-Footer { font-size: 100%; font-family: "Calibri"; font-weight: normal; font-style: normal; text-decoration: none;  }
+-->
+</style>
+<script language="JavaScript" type="text/javascript">
+<!--
+function fnAdventInit()
+{
+  // Get Browser Names and Versions //////////////////////////
+  var bIsNetscape = false;
+  var bIsMicrosoft = false;
+  var nVersion = 0;
+  var version = navigator.appVersion;
+  version = version.toUpperCase();
+  var index;
+  if(navigator.appName == "Netscape")
+  {
+    bIsNetscape = true;
+    index = version.indexOf(" ");
+    if(index != -1)
+    {
+      version = version.substring(0, index);
+      nVersion = parseFloat(version);
+    }
+  }
+  else if(navigator.appName == "Microsoft Internet Explorer")
+  {
+    bIsMicrosoft = true;
+    index = version.indexOf("MSIE");
+    if(index != -1)
+    {
+      version = version.substring(index, version.length);
+      index = version.indexOf(" ");
+      version = version.substring(index, version.length);
+      index = version.indexOf(";");
+      if(index != -1)
+      {
+        version = version.substring(0, index);
+        nVersion = parseFloat(version);
+      }
+    }
+  }
+
+  // Fix Pagination //////////////////////////////////////////
+  var tagPageBreak = "";
+  if(bIsNetscape)
+  {
+    if(nVersion >= 5)
+    {
+      tagPageBreak = "table";
+    }
+  }
+  else if(bIsMicrosoft)
+  {
+    if(nVersion >= 5.5)
+    {
+      tagPageBreak = "table";
+    }
+    else
+    {
+      tagPageBreak = "div";
+    }
+  }
+  if(tagPageBreak != "")
+  {
+    var collTable = document.getElementsByTagName(tagPageBreak);
+    if (collTable!=null)
+    {
+      for (k=0; k<collTable.length; k++)
+      {
+        if (bIsMicrosoft && nVersion >= 7.0) // IE 7
+        {
+          if (k != collTable.length - 1)
+            collTable[k].style.pageBreakAfter="always";
+        }
+        else
+        {
+          if(k > 0 || tagPageBreak == "div") // skip first table
+          {
+            collTable[k].style.pageBreakBefore="always";
+          }
+        }
+      }
+    }
+  }
+  // Fix Netscape 6.0 Footers ////////////////////////////////
+  if(bIsNetscape && nVersion >= 5)
+  {
+    var collTable = document.getElementsByTagName("table");
+    if(collTable == null)
+    {
+      return;
+    }
+    for(l=0; l<collTable.length; l++)
+    {
+      var collTBody = collTable[l].getElementsByTagName("tbody");
+      if( collTBody == null)
+      {
+        break;
+      }
+      var collTFoot = collTable[l].getElementsByTagName("tfoot");
+      if( collTFoot == null)
+      {
+        break;
+      }
+      if(collTBody.length == collTFoot.length)
+      {
+        var currentRow;
+        var currentCell;
+        for(i=0; i<collTBody.length; i++)
+        {
+          var currentTBody = collTBody.item(i);
+          var currentTFoot = collTFoot.item(i);
+          var collTR = currentTFoot.childNodes;
+          if (collTR!=null)
+          {
+            for (j=0; j<collTR.length; j++)
+            {
+              if(collTR.item(j).tagName == "TR")
+              {
+                currentRow = document.createElement("TR");
+                currentCell = document.createElement("TD");
+                var collTD = collTR.item(j).childNodes;
+                currentCell.appendChild(document.createTextNode(collTD.item(1).firstChild.data));
+                currentCell.align = collTD.item(1).align;
+                currentCell.colSpan = collTD.item(1).colSpan;
+                currentRow.appendChild(currentCell);
+                currentTBody.appendChild(currentRow);
+                currentTFoot.removeChild(collTR.item(j));
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+//-->
+</script>
+<script language="JavaScript" type="text/javascript">
+<!--
+window.onload=fnAdventInit;
+//-->
+</script>
+<style type="text/css" media=print>
+<!--
+    tr.S1-FirmName { font-size: 11pt; font-family: "Calibri"; font-weight: normal; font-style: normal; text-decoration: none; page-break-before: avoid; page-break-after: avoid; }
+    tr.S1-RepTitle { font-size: 14pt; font-family: "Calibri"; font-weight: normal; font-style: normal; text-decoration: none; page-break-before: avoid; page-break-after: avoid; }
+    tr.S1-PortName { font-size: 12pt; font-family: "Calibri"; font-weight: bold; font-style: italic; text-decoration: none; page-break-before: avoid; page-break-after: avoid; }
+    tr.S1-Date { font-size: 10pt; font-family: "Calibri"; font-weight: normal; font-style: italic; text-decoration: none; page-break-before: avoid; page-break-after: avoid; }
+    tr.S1-ColHeader { font-size: 8pt; font-family: "Calibri"; font-weight: bold; font-style: normal; text-decoration: none; page-break-before: avoid; page-break-after: avoid; }
+    tr.S1-SectHeader { font-size: 8pt; font-family: "Calibri"; font-weight: bold; font-style: normal; text-decoration: none; page-break-before: auto; page-break-after: avoid; }
+    tr.S1-Header { font-size: 10pt; font-family: "Calibri"; font-weight: bold; font-style: normal; text-decoration: none; page-break-before: auto; page-break-after: avoid; }
+    tr.S1-Detail { font-size: 8pt; font-family: "Calibri"; font-weight: normal; font-style: normal; text-decoration: none; page-break-before: auto; page-break-after: auto; }
+    tr.S1-UnderLine { line-height: 0%; page-break-before: avoid; page-break-after: avoid; }
+    tr.S1-SectSubtotal { font-size: 8pt; font-family: "Calibri"; font-weight: normal; font-style: normal; text-decoration: none; page-break-before: avoid; page-break-after: auto; }
+    tr.S1-GrandTotal { font-size: 8pt; font-family: "Calibri"; font-weight: bold; font-style: normal; text-decoration: none; page-break-before: avoid; page-break-after: auto; }
+    tr.S1-Warning { font-size: 8pt; font-family: "Calibri"; font-weight: bold; font-style: italic; text-decoration: none; page-break-before: avoid; page-break-after: avoid; }
+    tr.S1-Footnote { font-size: 8pt; font-family: "Calibri"; font-weight: normal; font-style: normal; text-decoration: none; page-break-before: avoid; page-break-after: avoid; }
+    tr.S1-Footer { font-size: 8pt; font-family: "Calibri"; font-weight: normal; font-style: normal; text-decoration: none; page-break-before: avoid; page-break-after: avoid; }
+-->
+</style>
+<style type="text/css" media=screen>
+<!--
+    tr.S1-FirmName { font-size: 138%; font-family: "Calibri"; font-weight: normal; font-style: normal; text-decoration: none;  }
+    tr.S1-RepTitle { font-size: 175%; font-family: "Calibri"; font-weight: normal; font-style: normal; text-decoration: none;  }
+    tr.S1-PortName { font-size: 150%; font-family: "Calibri"; font-weight: bold; font-style: italic; text-decoration: none;  }
+    tr.S1-Date { font-size: 125%; font-family: "Calibri"; font-weight: normal; font-style: italic; text-decoration: none;  }
+    tr.S1-ColHeader { font-size: 100%; font-family: "Calibri"; font-weight: bold; font-style: normal; text-decoration: none;  }
+    tr.S1-SectHeader { font-size: 100%; font-family: "Calibri"; font-weight: bold; font-style: normal; text-decoration: none;  }
+    tr.S1-Header { font-size: 125%; font-family: "Calibri"; font-weight: bold; font-style: normal; text-decoration: none;  }
+    tr.S1-Detail { font-size: 100%; font-family: "Calibri"; font-weight: normal; font-style: normal; text-decoration: none;  }
+    tr.S1-UnderLine { line-height: 0%; page-break-before: avoid; page-break-after: avoid; }
+    tr.S1-SectSubtotal { font-size: 100%; font-family: "Calibri"; font-weight: normal; font-style: normal; text-decoration: none;  }
+    tr.S1-GrandTotal { font-size: 100%; font-family: "Calibri"; font-weight: bold; font-style: normal; text-decoration: none;  }
+    tr.S1-Warning { font-size: 100%; font-family: "Calibri"; font-weight: bold; font-style: italic; text-decoration: none;  }
+    tr.S1-Footnote { font-size: 100%; font-family: "Calibri"; font-weight: normal; font-style: normal; text-decoration: none;  }
+    tr.S1-Footer { font-size: 100%; font-family: "Calibri"; font-weight: normal; font-style: normal; text-decoration: none;  }
+-->
+</style>
+<style type="text/css" media=print>
+<!--
+    tr.S2-FirmName { font-size: 11pt; font-family: "Calibri"; font-weight: normal; font-style: normal; text-decoration: none; page-break-before: avoid; page-break-after: avoid; }
+    tr.S2-RepTitle { font-size: 14pt; font-family: "Calibri"; font-weight: normal; font-style: normal; text-decoration: none; page-break-before: avoid; page-break-after: avoid; }
+    tr.S2-PortName { font-size: 12pt; font-family: "Calibri"; font-weight: bold; font-style: italic; text-decoration: none; page-break-before: avoid; page-break-after: avoid; }
+    tr.S2-Date { font-size: 10pt; font-family: "Calibri"; font-weight: normal; font-style: italic; text-decoration: none; page-break-before: avoid; page-break-after: avoid; }
+    tr.S2-ColHeader { font-size: 10pt; font-family: "Calibri"; font-weight: bold; font-style: normal; text-decoration: none; page-break-before: avoid; page-break-after: avoid; }
+    tr.S2-SectHeader { font-size: 10pt; font-family: "Calibri"; font-weight: bold; font-style: normal; text-decoration: none; page-break-before: auto; page-break-after: avoid; }
+    tr.S2-Header { font-size: 10pt; font-family: "Calibri"; font-weight: bold; font-style: normal; text-decoration: none; page-break-before: auto; page-break-after: avoid; }
+    tr.S2-Detail { font-size: 10pt; font-family: "Calibri"; font-weight: normal; font-style: normal; text-decoration: none; page-break-before: auto; page-break-after: auto; }
+    tr.S2-UnderLine { line-height: 0%; page-break-before: avoid; page-break-after: avoid; }
+    tr.S2-SectSubtotal { font-size: 10pt; font-family: "Calibri"; font-weight: normal; font-style: normal; text-decoration: none; page-break-before: avoid; page-break-after: auto; }
+    tr.S2-GrandTotal { font-size: 10pt; font-family: "Calibri"; font-weight: bold; font-style: normal; text-decoration: none; page-break-before: avoid; page-break-after: auto; }
+    tr.S2-Warning { font-size: 8pt; font-family: "Calibri"; font-weight: bold; font-style: italic; text-decoration: none; page-break-before: avoid; page-break-after: avoid; }
+    tr.S2-Footnote { font-size: 8pt; font-family: "Calibri"; font-weight: normal; font-style: normal; text-decoration: none; page-break-before: avoid; page-break-after: avoid; }
+    tr.S2-Footer { font-size: 8pt; font-family: "Calibri"; font-weight: normal; font-style: normal; text-decoration: none; page-break-before: avoid; page-break-after: avoid; }
+-->
+</style>
+<style type="text/css" media=screen>
+<!--
+    tr.S2-FirmName { font-size: 110%; font-family: "Calibri"; font-weight: normal; font-style: normal; text-decoration: none;  }
+    tr.S2-RepTitle { font-size: 140%; font-family: "Calibri"; font-weight: normal; font-style: normal; text-decoration: none;  }
+    tr.S2-PortName { font-size: 120%; font-family: "Calibri"; font-weight: bold; font-style: italic; text-decoration: none;  }
+    tr.S2-Date { font-size: 100%; font-family: "Calibri"; font-weight: normal; font-style: italic; text-decoration: none;  }
+    tr.S2-ColHeader { font-size: 100%; font-family: "Calibri"; font-weight: bold; font-style: normal; text-decoration: none;  }
+    tr.S2-SectHeader { font-size: 100%; font-family: "Calibri"; font-weight: bold; font-style: normal; text-decoration: none;  }
+    tr.S2-Header { font-size: 100%; font-family: "Calibri"; font-weight: bold; font-style: normal; text-decoration: none;  }
+    tr.S2-Detail { font-size: 100%; font-family: "Calibri"; font-weight: normal; font-style: normal; text-decoration: none;  }
+    tr.S2-UnderLine { line-height: 0%; page-break-before: avoid; page-break-after: avoid; }
+    tr.S2-SectSubtotal { font-size: 100%; font-family: "Calibri"; font-weight: normal; font-style: normal; text-decoration: none;  }
+    tr.S2-GrandTotal { font-size: 100%; font-family: "Calibri"; font-weight: bold; font-style: normal; text-decoration: none;  }
+    tr.S2-Warning { font-size: 80%; font-family: "Calibri"; font-weight: bold; font-style: italic; text-decoration: none;  }
+    tr.S2-Footnote { font-size: 80%; font-family: "Calibri"; font-weight: normal; font-style: normal; text-decoration: none;  }
+    tr.S2-Footer { font-size: 80%; font-family: "Calibri"; font-weight: normal; font-style: normal; text-decoration: none;  }
+-->
+</style>
+`;
+
+const content2: string = `
+<table width="49%" align=center cellpadding=3% cellspacing=0 class=S2>
+    <colgroup>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    </colgroup>
+<thead>
+<tr class="S2-FirmName">
+    <th align=center colspan=49>Advent Asset Management</th>
+    </tr>
+<tr class="S2-RepTitle">
+    <th align=center colspan=49>PERFORMANCE REPORT</th>
+    </tr>
+<tr class="S2-RepTitle">
+    <th align=center colspan=49>NET OF FEES</th>
+    </tr>
+<tr class="S2-PortName">
+    <th align=center colspan=49><HyperLink><AppCommand Caption='Performance by Asset Class' Type='Axys Report' Cmd='rep32 -madvperf1.smc -pcase "-b093005 123105" -t -J -x -su -z "-l$fx us	$acb y	$perffee y	$_ann n	$_graph n	$gname11 Evan Case	$__sens Plump npennies nshowai ypmai ntdai nyldmeth yoncost nfxflip nsettle nigroup nsector nadjcost ntdaa npmaa npaycap ?dsclaim  ? curface ytipsadj nlcid  1033 priset  Standard shwsym y"' />
+</HyperLink>Evan Case</a></th>
+    </tr>
+<tr class="S2-PortName">
+    <th align=center colspan=49>CASE</th>
+    </tr>
+<tr class="S2-PortName">
+    <th align=center colspan=49>Fifth Third Bank  990123475</th>
+    </tr>
+<tr class="S2-Date">
+    <th align=center colspan=49>From 09-30-05 to 12-31-05</th>
+    </tr>
+<tr class="S2-Header">
+    <td colspan=49>&nbsp;</td>
+    </tr>
+</thead>
+<tbody>
+<tr class="S2-SectSubtotal">
+    <td align=left colspan=42>Portfolio Value on 09-30-05</td>
+    <td align=right colspan=20>8,396,388</td>
+    </tr>
+<tr class="S2-Detail">
+    <td align=left colspan=23>Accrued Interest</td>
+    <td align=left colspan=19>&nbsp;</td>
+    <td align=right colspan=20>18,778</td>
+    </tr>
+<tr class="S2-Detail">
+    <td colspan=49>&nbsp;</td>
+    </tr>
+<tr class="S2-Detail">
+    <td align=left colspan=23><HyperLink><AppCommand Caption='Significant Contributions/Withdrawals' Type='Axys Report' Cmd='rep32 -madvperf2.smc -pcase "-b093005 123105" -t -J -x -su -z "-l$fx us	$acb y	$perffee y	$_ann n	$_graph n	$gname11 Evan Case	$__sens Plump npennies nshowai ypmai ntdai nyldmeth yoncost nfxflip nsettle nigroup nsector nadjcost ntdaa npmaa npaycap ?dsclaim  ? curface ytipsadj nlcid  1033 priset  Standard shwsym y"' />
+</HyperLink>Contributions</a></td>
+    <td align=left colspan=19>&nbsp;</td>
+    <td align=right colspan=20>2,894,000</td>
+    </tr>
+<tr class="S2-Detail">
+    <td colspan=49>&nbsp;</td>
+    </tr>
+<tr class="S2-Detail">
+    <td align=left colspan=23><HyperLink><AppCommand Caption='Significant Contributions/Withdrawals' Type='Axys Report' Cmd='rep32 -madvperf2.smc -pcase "-b093005 123105" -t -J -x -su -z "-l$fx us	$acb y	$perffee y	$_ann n	$_graph n	$gname11 Evan Case	$__sens Plump npennies nshowai ypmai ntdai nyldmeth yoncost nfxflip nsettle nigroup nsector nadjcost ntdaa npmaa npaycap ?dsclaim  ? curface ytipsadj nlcid  1033 priset  Standard shwsym y"' />
+</HyperLink>Withdrawals</a></td>
+    <td align=left colspan=19>&nbsp;</td>
+    <td align=right colspan=20>0</td>
+    </tr>
+<tr class="S2-Detail">
+    <td colspan=49>&nbsp;</td>
+    </tr>
+<tr class="S2-Detail">
+    <td align=left colspan=23><HyperLink><AppCommand Caption='Date to Date Gain and Loss' Type='Axys Report' Cmd='rep32 -madvperf3.smc -pcase "-b093005 123105" -t -J -x -su -z "-l$fx us	$acb y	$perffee y	$_ann n	$_graph n	$gname11 Evan Case	$__sens Plump npennies nshowai ypmai ntdai nyldmeth yoncost nfxflip nsettle nigroup nsector nadjcost ntdaa npmaa npaycap ?dsclaim  ? curface ytipsadj nlcid  1033 priset  Standard shwsym y"' />
+</HyperLink>Realized Gains</a></td>
+    <td align=left colspan=19>&nbsp;</td>
+    <td align=right colspan=20>-42</td>
+    </tr>
+<tr class="S2-Detail">
+    <td colspan=49>&nbsp;</td>
+    </tr>
+<tr class="S2-Detail">
+    <td align=left colspan=23><HyperLink><AppCommand Caption='Date to Date Gain and Loss' Type='Axys Report' Cmd='rep32 -madvperf3.smc -pcase "-b093005 123105" -t -J -x -su -z "-l$fx us	$acb y	$perffee y	$_ann n	$_graph n	$gname11 Evan Case	$__sens Plump npennies nshowai ypmai ntdai nyldmeth yoncost nfxflip nsettle nigroup nsector nadjcost ntdaa npmaa npaycap ?dsclaim  ? curface ytipsadj nlcid  1033 priset  Standard shwsym y"' />
+</HyperLink>Unrealized Gains</a></td>
+    <td align=left colspan=19>&nbsp;</td>
+    <td align=right colspan=20>252,128</td>
+    </tr>
+<tr class="S2-Detail">
+    <td colspan=49>&nbsp;</td>
+    </tr>
+<tr class="S2-Detail">
+    <td align=left colspan=23><HyperLink><AppCommand Caption='Income and Expenses' Type='Axys Report' Cmd='rep32 -madvperf4.smc -pcase "-b100105 123105" -t -J -x -su -z "-l$fx us	$acb y	$perffee y	$_ann n	$_graph n	$gname11 Evan Case	$__sens Plump npennies nshowai ypmai ntdai nyldmeth yoncost nfxflip nsettle nigroup nsector nadjcost ntdaa npmaa npaycap ?dsclaim  ? curface ytipsadj nlcid  1033 priset  Standard shwsym y"' />
+</HyperLink>Interest</a></td>
+    <td align=left colspan=19>&nbsp;</td>
+    <td align=right colspan=20>725</td>
+    </tr>
+<tr class="S2-Detail">
+    <td colspan=49>&nbsp;</td>
+    </tr>
+<tr class="S2-Detail">
+    <td align=left colspan=23><HyperLink><AppCommand Caption='Income and Expenses' Type='Axys Report' Cmd='rep32 -madvperf4.smc -pcase "-b100105 123105" -t -J -x -su -z "-l$fx us	$acb y	$perffee y	$_ann n	$_graph n	$gname11 Evan Case	$__sens Plump npennies nshowai ypmai ntdai nyldmeth yoncost nfxflip nsettle nigroup nsector nadjcost ntdaa npmaa npaycap ?dsclaim  ? curface ytipsadj nlcid  1033 priset  Standard shwsym y"' />
+</HyperLink>Dividends</a></td>
+    <td align=left colspan=19>&nbsp;</td>
+    <td align=right colspan=20>0</td>
+    </tr>
+<tr class="S2-Detail">
+    <td colspan=49>&nbsp;</td>
+    </tr>
+<tr class="S2-Detail">
+    <td align=left colspan=23>Change in Accrued Interest</td>
+    <td align=left colspan=19>&nbsp;</td>
+    <td align=right colspan=20>8</td>
+    </tr>
+<tr class="S2-Detail">
+    <td colspan=49>&nbsp;</td>
+    </tr>
+<tr class="S2-UnderLine">
+    <td align=left colspan=23>&nbsp;</td>
+    <td align=left colspan=19><hr size=1 noshade></td>
+    <td align=left colspan=19>&nbsp;</td>
+    </tr>
+<tr class="S2-SectSubtotal">
+    <td align=left colspan=42>Portfolio Value on 12-31-05</td>
+    <td align=right colspan=20>11,543,199</td>
+    </tr>
+<tr class="S2-Detail">
+    <td align=left colspan=23>Accrued Interest</td>
+    <td align=left colspan=19>&nbsp;</td>
+    <td align=right colspan=20>18,786</td>
+    </tr>
+<tr class="S2-Detail">
+    <td colspan=49>&nbsp;</td>
+    </tr>
+<tr class="S2-Detail">
+    <td colspan=49>&nbsp;</td>
+    </tr>
+<tr class="S2-Detail">
+    <td colspan=49>&nbsp;</td>
+    </tr>
+<tr class="S2-Detail">
+    <td align=left colspan=23>Average Capital</td>
+    <td align=left colspan=19>&nbsp;</td>
+    <td align=right colspan=20>8,446,623</td>
+    </tr>
+<tr class="S2-Detail">
+    <td colspan=49>&nbsp;</td>
+    </tr>
+<tr class="S2-Detail">
+    <td align=left colspan=23>Total Fees</td>
+    <td align=left colspan=19>&nbsp;</td>
+    <td align=right colspan=20>0</td>
+    </tr>
+<tr class="S2-Detail">
+    <td colspan=49>&nbsp;</td>
+    </tr>
+<tr class="S2-Detail">
+    <td align=left colspan=23>Total Gain after Fees</td>
+    <td align=left colspan=19>&nbsp;</td>
+    <td align=right colspan=20>252,819</td>
+    </tr>
+<tr class="S2-UnderLine">
+    <td align=left colspan=23>&nbsp;</td>
+    <td align=left colspan=19>&nbsp;</td>
+    <td align=left colspan=20><hr size=1 noshade></td>
+    </tr>
+<tr class="S2-GrandTotal">
+    <td align=left colspan=23>IRR for 0.25 Years</td>
+    <td align=left colspan=19>&nbsp;</td>
+    <td align=right colspan=20>2.99 %</td>
+    </tr>
+<tr class="S2-GrandTotal">
+    <td align=left colspan=23>&nbsp;</td>
+    <td align=left colspan=19>&nbsp;</td>
+    <td align=left colspan=20><hr size=1 noshade></td>
+    </tr>
+</tbody>
+</table>
+<div>
+<table width="49%" align=center cellpadding=3% cellspacing=0 class=S2>
+    <colgroup>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    <col>
+    </colgroup>
+<thead>
+<tr class="S2-FirmName">
+    <th align=center colspan=49>Advent Asset Management</th>
+    </tr>
+<tr class="S2-RepTitle">
+    <th align=center colspan=49>PERFORMANCE REPORT</th>
+    </tr>
+<tr class="S2-RepTitle">
+    <th align=center colspan=49>GROSS OF FEES</th>
+    </tr>
+<tr class="S2-PortName">
+    <th align=center colspan=49><HyperLink><AppCommand Caption='Performance by Asset Class' Type='Axys Report' Cmd='rep32 -madvperf1.smc -pcase "-b093005 123105" -t -J -x -su -z "-l$fx us	$acb y	$perffee n	$_ann n	$_graph n	$gname11 Evan Case	$__sens Plump npennies nshowai ypmai ntdai nyldmeth yoncost nfxflip nsettle nigroup nsector nadjcost ntdaa npmaa npaycap ?dsclaim  ? curface ytipsadj nlcid  1033 priset  Standard shwsym y"' />
+</HyperLink>Evan Case</a></th>
+    </tr>
+<tr class="S2-PortName">
+    <th align=center colspan=49>CASE</th>
+    </tr>
+<tr class="S2-PortName">
+    <th align=center colspan=49>Fifth Third Bank  990123475</th>
+    </tr>
+<tr class="S2-Date">
+    <th align=center colspan=49>From 09-30-05 to 12-31-05</th>
+    </tr>
+<tr class="S2-Header">
+    <td colspan=49>&nbsp;</td>
+    </tr>
+</thead>
+<tbody>
+<tr class="S2-SectSubtotal">
+    <td align=left colspan=42>Portfolio Value on 09-30-05</td>
+    <td align=right colspan=20>8,396,388</td>
+    </tr>
+<tr class="S2-Detail">
+    <td align=left colspan=23>Accrued Interest</td>
+    <td align=left colspan=19>&nbsp;</td>
+    <td align=right colspan=20>18,778</td>
+    </tr>
+<tr class="S2-Detail">
+    <td colspan=49>&nbsp;</td>
+    </tr>
+<tr class="S2-Detail">
+    <td align=left colspan=23><HyperLink><AppCommand Caption='Significant Contributions/Withdrawals' Type='Axys Report' Cmd='rep32 -madvperf2.smc -pcase "-b093005 123105" -t -J -x -su -z "-l$fx us	$acb y	$perffee n	$_ann n	$_graph n	$gname11 Evan Case	$__sens Plump npennies nshowai ypmai ntdai nyldmeth yoncost nfxflip nsettle nigroup nsector nadjcost ntdaa npmaa npaycap ?dsclaim  ? curface ytipsadj nlcid  1033 priset  Standard shwsym y"' />
+</HyperLink>Contributions</a></td>
+    <td align=left colspan=19>&nbsp;</td>
+    <td align=right colspan=20>2,894,000</td>
+    </tr>
+<tr class="S2-Detail">
+    <td colspan=49>&nbsp;</td>
+    </tr>
+<tr class="S2-Detail">
+    <td align=left colspan=23><HyperLink><AppCommand Caption='Significant Contributions/Withdrawals' Type='Axys Report' Cmd='rep32 -madvperf2.smc -pcase "-b093005 123105" -t -J -x -su -z "-l$fx us	$acb y	$perffee n	$_ann n	$_graph n	$gname11 Evan Case	$__sens Plump npennies nshowai ypmai ntdai nyldmeth yoncost nfxflip nsettle nigroup nsector nadjcost ntdaa npmaa npaycap ?dsclaim  ? curface ytipsadj nlcid  1033 priset  Standard shwsym y"' />
+</HyperLink>Withdrawals</a></td>
+    <td align=left colspan=19>&nbsp;</td>
+    <td align=right colspan=20>0</td>
+    </tr>
+<tr class="S2-Detail">
+    <td colspan=49>&nbsp;</td>
+    </tr>
+<tr class="S2-Detail">
+    <td align=left colspan=23><HyperLink><AppCommand Caption='Date to Date Gain and Loss' Type='Axys Report' Cmd='rep32 -madvperf3.smc -pcase "-b093005 123105" -t -J -x -su -z "-l$fx us	$acb y	$perffee n	$_ann n	$_graph n	$gname11 Evan Case	$__sens Plump npennies nshowai ypmai ntdai nyldmeth yoncost nfxflip nsettle nigroup nsector nadjcost ntdaa npmaa npaycap ?dsclaim  ? curface ytipsadj nlcid  1033 priset  Standard shwsym y"' />
+</HyperLink>Realized Gains</a></td>
+    <td align=left colspan=19>&nbsp;</td>
+    <td align=right colspan=20>-42</td>
+    </tr>
+<tr class="S2-Detail">
+    <td colspan=49>&nbsp;</td>
+    </tr>
+<tr class="S2-Detail">
+    <td align=left colspan=23><HyperLink><AppCommand Caption='Date to Date Gain and Loss' Type='Axys Report' Cmd='rep32 -madvperf3.smc -pcase "-b093005 123105" -t -J -x -su -z "-l$fx us	$acb y	$perffee n	$_ann n	$_graph n	$gname11 Evan Case	$__sens Plump npennies nshowai ypmai ntdai nyldmeth yoncost nfxflip nsettle nigroup nsector nadjcost ntdaa npmaa npaycap ?dsclaim  ? curface ytipsadj nlcid  1033 priset  Standard shwsym y"' />
+</HyperLink>Unrealized Gains</a></td>
+    <td align=left colspan=19>&nbsp;</td>
+    <td align=right colspan=20>252,128</td>
+    </tr>
+<tr class="S2-Detail">
+    <td colspan=49>&nbsp;</td>
+    </tr>
+<tr class="S2-Detail">
+    <td align=left colspan=23><HyperLink><AppCommand Caption='Income and Expenses' Type='Axys Report' Cmd='rep32 -madvperf4.smc -pcase "-b100105 123105" -t -J -x -su -z "-l$fx us	$acb y	$perffee n	$_ann n	$_graph n	$gname11 Evan Case	$__sens Plump npennies nshowai ypmai ntdai nyldmeth yoncost nfxflip nsettle nigroup nsector nadjcost ntdaa npmaa npaycap ?dsclaim  ? curface ytipsadj nlcid  1033 priset  Standard shwsym y"' />
+</HyperLink>Interest</a></td>
+    <td align=left colspan=19>&nbsp;</td>
+    <td align=right colspan=20>725</td>
+    </tr>
+<tr class="S2-Detail">
+    <td colspan=49>&nbsp;</td>
+    </tr>
+<tr class="S2-Detail">
+    <td align=left colspan=23><HyperLink><AppCommand Caption='Income and Expenses' Type='Axys Report' Cmd='rep32 -madvperf4.smc -pcase "-b100105 123105" -t -J -x -su -z "-l$fx us	$acb y	$perffee n	$_ann n	$_graph n	$gname11 Evan Case	$__sens Plump npennies nshowai ypmai ntdai nyldmeth yoncost nfxflip nsettle nigroup nsector nadjcost ntdaa npmaa npaycap ?dsclaim  ? curface ytipsadj nlcid  1033 priset  Standard shwsym y"' />
+</HyperLink>Dividends</a></td>
+    <td align=left colspan=19>&nbsp;</td>
+    <td align=right colspan=20>0</td>
+    </tr>
+<tr class="S2-Detail">
+    <td colspan=49>&nbsp;</td>
+    </tr>
+<tr class="S2-Detail">
+    <td align=left colspan=23>Change in Accrued Interest</td>
+    <td align=left colspan=19>&nbsp;</td>
+    <td align=right colspan=20>8</td>
+    </tr>
+<tr class="S2-Detail">
+    <td colspan=49>&nbsp;</td>
+    </tr>
+<tr class="S2-UnderLine">
+    <td align=left colspan=23>&nbsp;</td>
+    <td align=left colspan=19><hr size=1 noshade></td>
+    <td align=left colspan=19>&nbsp;</td>
+    </tr>
+<tr class="S2-SectSubtotal">
+    <td align=left colspan=42>Portfolio Value on 12-31-05</td>
+    <td align=right colspan=20>11,543,199</td>
+    </tr>
+<tr class="S2-Detail">
+    <td align=left colspan=23>Accrued Interest</td>
+    <td align=left colspan=19>&nbsp;</td>
+    <td align=right colspan=20>18,786</td>
+    </tr>
+<tr class="S2-Detail">
+    <td colspan=49>&nbsp;</td>
+    </tr>
+<tr class="S2-Detail">
+    <td colspan=49>&nbsp;</td>
+    </tr>
+<tr class="S2-Detail">
+    <td colspan=49>&nbsp;</td>
+    </tr>
+<tr class="S2-Detail">
+    <td align=left colspan=23>Average Capital</td>
+    <td align=left colspan=19>&nbsp;</td>
+    <td align=right colspan=20>8,446,623</td>
+    </tr>
+<tr class="S2-Detail">
+    <td colspan=49>&nbsp;</td>
+    </tr>
+<tr class="S2-Detail">
+    <td align=left colspan=23>Total Gain before Fees</td>
+    <td align=left colspan=19>&nbsp;</td>
+    <td align=right colspan=20>252,819</td>
+    </tr>
+<tr class="S2-UnderLine">
+    <td align=left colspan=23>&nbsp;</td>
+    <td align=left colspan=19>&nbsp;</td>
+    <td align=left colspan=20><hr size=1 noshade></td>
+    </tr>
+<tr class="S2-GrandTotal">
+    <td align=left colspan=23>IRR for 0.25 Years</td>
+    <td align=left colspan=19>&nbsp;</td>
+    <td align=right colspan=20>2.99 %</td>
+    </tr>
+<tr class="S2-GrandTotal">
+    <td align=left colspan=23>&nbsp;</td>
+    <td align=left colspan=19>&nbsp;</td>
+    <td align=left colspan=20><hr size=1 noshade></td>
+    </tr>
+</tbody>
+</table>
+</div>
+</body>
+</html>
+`;
+
 
 @Component({
     selector: 'r-main',
@@ -19,7 +706,7 @@ import { DragulaService } from 'ng2-dragula';
                     <strong>09/30/2005 - 12/31/2005</strong>
                     <label>Period</label>
                 </div>
-            </div>
+            </div>   
             <div class="template-widgets">
                 <p-menu #gridMenu [popup]="true" pDraggable="grids" 
                     [model]="gridMenuItems" 
@@ -33,11 +720,11 @@ import { DragulaService } from 'ng2-dragula';
                 <i id="template-text" class="fa fa-eraser r-action" aria-hidden="true" title="Clear" (click)="clearTemplate($event)"></i>
             </div>
             <div class="action-buttons">
-                <span id="full-screen" class="k-icon k-i-full-screen r-action" title="Full Screen"></span>
-                <span id="download" class="k-icon k-i-download r-action" title="Download"></span>
-                <span id="print" class="k-icon k-i-print r-action" title="Print"></span>
-                <span id="thumbnail" class="k-icon k-i-thumbnails-left r-action"></span>
-                <span id="settings" class="k-icon k-i-gear r-action"></span>
+                <span id="download" class="k-icon k-i-download r-action" title="Download" (click)="downloadJsReport()"></span>
+                <span id="full-screen" class="k-icon k-i-full-screen r-action" title="Full Screen" (click)="generateJsReport(1)"></span>
+                <span id="print" class="k-icon k-i-print r-action" title="Print" (click)="generateJsReport(2)"></span>
+                <span id="thumbnail" class="k-icon k-i-thumbnails-left r-action" title="Thumbnail" (click)="generateJsReport(3)"></span>
+                <span id="settings" class="k-icon k-i-gear r-action" (click)="generateJsReport(4)"></span>
             </div>
         </div>
         <div id="r-container" class="r-container">
@@ -55,7 +742,7 @@ import { DragulaService } from 'ng2-dragula';
                 </p-tree>
             </div>
             <div class="r-editors">
-                <div class="paper">
+                <div class="paper" id="reportPlaceholder">
                     <ng-container *ngFor="let opt of options.children">
                         <r-grid *ngIf="opt.selector === 'r-grid' " [options]="opt.options">
                         </r-grid>
@@ -315,7 +1002,6 @@ export class ReportingComponent implements OnInit {
         this.parseData();
 
         this.dragulaService.drop.subscribe((value: Array<any>) => {
-            console.warn(value);
             if (value[0] === "column") {
                 this.resortColumn();
             }
@@ -323,8 +1009,485 @@ export class ReportingComponent implements OnInit {
                 this.reorderClassification();
             }
         });
+
+        JsReport.serverUrl = 'https://shanelovesmarvel.jsreportonline.net';
+        JsReport.headers.Authorization = "d295dXNoYW5taW5nQHNpbmEuY29tOjQwMzEwMzY2M3poYW8=";
     }
 
+    downloadJsReport(type: number = 1, animation: boolean = false): void {
+        let request = {
+            template: {
+                content: `${content1}${this.getChartString(type, animation)}${content2}`,
+                //engine: 'none', recipe: 'html-with-browser-client'
+                engine: 'none', recipe: 'phantom-pdf'
+            }
+        };
+        JsReport.download("perfomance.pdf", request);
+    }
+
+    generateJsReport(type: number = 1, animation: boolean = true): void {
+        console.info(JsReport);
+        document.getElementById("reportPlaceholder").innerHTML = "";
+        let request = {
+            template: {
+                content: `${content1}${this.getChartString(type, animation)}${content2}`,
+                engine: 'none', recipe: 'html-with-browser-client'
+                //engine: 'none', recipe: 'phantom-pdf'
+            }
+        };
+
+        //display report in the new tab
+        //JsReport.render('_self', request);
+
+        //display report in placeholder with id reportPlaceholder
+        //JsReport.render('reportPlaceholder', request);
+
+        //display report in placeholder element
+        JsReport.render(document.getElementById('reportPlaceholder'), request);
+
+        //open download dialog for report
+        //JsReport.download('myReport.pdf', request);
+    }
+
+    getChartString(chartType: ChartType = ChartType.HighCharts, animation: boolean): string {
+        let baseScript: string = `
+            <script src="https://code.highcharts.com/highcharts.src.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
+            <script src="https://cdn.bootcss.com/echarts/3.8.5/echarts.min.js"></script>
+            <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.18/c3.min.js"></script>
+            </head>
+            <body>
+        `;
+        let chartString: string = "";
+        if (chartType === ChartType.HighCharts) {
+            chartString = `
+            <div>
+                <div id="chart.0" style="height: 400px; max-width: 800px; margin: 0 auto"></div>
+                <div id="chart.1" style="height: 400px; max-width: 800px; margin: 0 auto"></div>
+                <div id="chart.2" style="height: 400px; max-width: 800px; margin: 0 auto"></div>
+                <div id="chart.3" style="height: 400px; max-width: 800px; margin: 0 auto"></div>
+                <img src="http://img3.iqilu.com/data/attachment/forum/201403/20/063249zta7zntigk7itk2t.jpg" style="margin: 0 auto;">
+            </div>
+            <script>
+                Highcharts.chart('chart.0', {
+                    title: {
+                        text: "HighCharts - Pie"
+                    },
+                    chart: {
+                        type: 'pie'
+                    },
+                    series: [
+                        {
+                            animation: ${animation},
+                            data: [
+                                {
+                                    name: 'Equity',
+                                    color: 'blue',
+                                    y: 9911045
+                                },
+                                {
+                                    name: 'Fixed Income',
+                                    color: 'yellow',
+                                    y: 6447356
+                                },
+                                {
+                                    name: 'Cash',
+                                    color: 'red',
+                                    y: 1586467
+                                }
+                            ]
+                        }
+                    ]
+                });
+
+                Highcharts.chart('chart.1', {
+                    title: {
+                        text: "HighCharts - HorizontalBar"
+                    },
+                    chart: {
+                        type: 'bar',
+                    },
+                    series: [
+                        {
+                            animation: ${animation},
+                            data: [
+                                {
+                                    name: 'Equity',
+                                    color: 'blue',
+                                    y: 9911045
+                                }, 
+                                {
+                                    name: 'Fixed Income',
+                                    color: 'yellow',
+                                    y: 6447356
+                                }, 
+                                {
+                                    name: 'Cash',
+                                    color: 'red',
+                                    y: 1586467
+                                }
+                            ]
+                        }
+                    ]
+                });
+
+                Highcharts.chart('chart.2', {
+                    title: {
+                        text: "HighCharts - Bar"
+                    },
+                    chart: {
+                        type: 'column',
+                    },
+                    series: [
+                        {
+                            animation: ${animation},
+                            data: [
+                                {
+                                    name: 'Equity',
+                                    color: 'blue',
+                                    y: 9911045
+                                }, 
+                                {
+                                    name: 'Fixed Income',
+                                    color: 'yellow',
+                                    y: 6447356
+                                }, 
+                                {
+                                    name: 'Cash',
+                                    color: 'red',
+                                    y: 1586467
+                                }
+                            ]
+                        }
+                    ]
+                });
+
+                Highcharts.chart('chart.3', {
+                    title: {
+                        text: "HighCharts - Line"
+                    },
+                    chart: {
+                        type: 'line',
+                    },
+                    series: [
+                        {
+                            animation: ${animation},
+                            data: [
+                                {
+                                    name: 'Equity',
+                                    color: 'blue',
+                                    y: 9911045
+                                }, 
+                                {
+                                    name: 'Fixed Income',
+                                    color: 'yellow',
+                                    y: 6447356
+                                }, 
+                                {
+                                    name: 'Cash',
+                                    color: 'red',
+                                    y: 1586467
+                                }
+                            ]
+                        }
+                    ]
+                });
+
+                // var imgs = document.getElementsByTagName("img");
+                // console.info(imgs[0]);
+                // var canvas = document.createElement("canvas");
+                // canvas.width = imgs[0].width;
+                // canvas.height = imgs[0].height;
+                // var ctx = canvas.getContext("2d");
+                // ctx.drawImage(imgs[0], 0, 0);
+                // var dataURL = canvas.toDataURL("assets/timg.jpg");
+                // console.warn(dataURL);
+            </script>
+            `;
+        }
+        else if (chartType === ChartType.ChartJS) {
+            chartString = `
+                <canvas id="chart.4" style="height: 400px; max-width: 800px; margin: 10px auto" width="600" height="400"></canvas>
+                <canvas id="chart.5" style="height: 400px; max-width: 800px; margin: 10px auto" width="600" height="400"></canvas>
+                <canvas id="chart.6" style="height: 400px; max-width: 800px; margin: 10px auto" width="600" height="400"></canvas>
+                <canvas id="chart.7" style="height: 400px; max-width: 800px; margin: 10px auto" width="600" height="400"></canvas>
+                <script>
+                    var ctx1 = document.getElementById("chart.4").getContext('2d');
+                    var barChart = new Chart(ctx1, {
+                        type: 'bar',
+                        data: {
+                            labels: ["Fixed Income", "Equity", "Cash"],
+                            datasets: [{
+                                label: '#ChartJS - Bar',
+                                data: [12, 19, 3],
+                                backgroundColor: ['yellow', 'blue', 'red'],
+                                borderColor: ['yellow', 'blue', 'red'],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                yAxes: [{
+                                    ticks: {
+                                        beginAtZero:true
+                                    }
+                                }]
+                            },
+                            animation: {
+                                duration: ${animation ? 1000 : 0}
+                            }
+                        }
+                    });
+            
+                    var ctx2 = document.getElementById("chart.5").getContext('2d');
+                    var pieChart = new Chart(ctx2, {
+                        type: 'pie',
+                        data: {
+                            labels: ["Fixed Income", "Equity", "Cash"],
+                            datasets: [{
+                                label: '#ChartJS - Pie',
+                                data: [12, 19, 3],
+                                backgroundColor: ['yellow', 'blue', 'red'],
+                                borderColor: ['yellow', 'blue', 'red'],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            animation: {
+                                duration: ${animation ? 1000 : 0}
+                            }
+                        }
+                    });
+            
+                    var ctx3 = document.getElementById("chart.6").getContext('2d');
+                    var lineChart = new Chart(ctx3, {
+                        type: 'line',
+                        data: {
+                            labels: ["Fixed Income", "Equity", "Cash"],
+                            datasets: [{
+                                label: '#ChartJS - Line',
+                                data: [12, 19, 3]
+                            }]
+                        },
+                        options: {
+                            animation: {
+                                duration: ${animation ? 1000 : 0}
+                            }
+                        }
+                    });
+            
+                    var ctx4 = document.getElementById("chart.7").getContext('2d');
+                    var hBarChart = new Chart(ctx4, {
+                        type: 'horizontalBar',
+                        data: {
+                            labels: ["Fixed Income", "Equity", "Cash"],
+                            datasets: [{
+                                label: 'ChartJS - Horizontal Bar',
+                                data: [12, 19, 3],
+                                backgroundColor: ['yellow', 'blue', 'red'],
+                                borderColor: ['yellow', 'blue', 'red'],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                yAxes: [{
+                                    ticks: {
+                                        beginAtZero:true
+                                    }
+                                }]
+                            },
+                            animation: {
+                                duration: ${animation ? 1000 : 0}
+                            }
+                        }
+                    });
+                </script>
+            `;
+        }
+        else if (chartType === ChartType.ECharts) {
+            chartString = `
+                <div id="chart.8" style="height: 400px; max-width: 800px; margin: 0 auto"></div>
+                <div id="chart.9" style="height: 400px; max-width: 800px; margin: 0 auto"></div>
+                <div id="chart.10" style="height: 400px; max-width: 800px; margin: 0 auto"></div>
+                <div id="chart.11" style="height: 400px; max-width: 800px; margin: 0 auto"></div>
+                <script>
+                    var ctx5 = echarts.init(document.getElementById('chart.8'));
+                    ctx5.setOption({
+                        title: {
+                            text: 'ECharts - Bar'
+                        },
+                        animation: ${animation},
+                        tooltip: {},
+                        legend: {
+                            data:['2015', '2016', '2017']
+                        },
+                        xAxis: {
+                            data: ['Fixed Income', 'Equity', 'Cash']
+                        },
+                        yAxis: {},
+                        series: [
+                            {
+                                name: "2015",
+                                type: 'bar',
+                                data: [12, 19, 3]
+                            },
+                            {
+                                name: "2016",
+                                type: 'bar',
+                                data: [18, 12, 20]
+                            },
+                            {
+                                name: "2017",
+                                type: 'bar',
+                                data: [6, 23, 16]
+                            }
+                        ]
+                    });
+            
+                    var ctx6 = echarts.init(document.getElementById('chart.9'));
+                    ctx6.setOption({
+                        title: {
+                            text: 'ECharts - HorizontalBar'
+                        },
+                        animation: ${animation},
+                        colors: ['yellow', 'blue', 'red'],
+                        tooltip: {},
+                        legend: {
+                            data:['2015', '2016', '2017']
+                        },
+                        xAxis: {
+                            
+                        },
+                        yAxis: {
+                            data: ['Fixed Income', 'Equity', 'Cash']
+                        },
+                        series: [
+                            {
+                                name: "2015",
+                                type: 'bar',
+                                data: [12, 19, 3]
+                            },
+                            {
+                                name: "2016",
+                                type: 'bar',
+                                data: [18, 12, 20]
+                            },
+                            {
+                                name: "2017",
+                                type: 'bar',
+                                data: [6, 23, 16]
+                            }
+                        ]
+                    });
+            
+                    var ctx7 = echarts.init(document.getElementById('chart.10'));
+                    ctx7.setOption({
+                        title: {
+                            text: 'ECharts - Pie'
+                        },
+                        animation: ${animation},
+                        tooltip: {},
+                        legend: {
+                            data:['Fixed Income', 'Equity', 'Cash']
+                        },
+                        series: [{
+                            type: 'pie',
+                            radius : '65%',
+                            center: ['50%', '50%'],
+                            data: [
+                                {
+                                    name: "Fixed Income",
+                                    value: 12
+                                },
+                                {
+                                    name: "Equity",
+                                    value: 19
+                                },
+                                {
+                                    name: "Cash",
+                                    value: 3
+                                }
+                            ]
+                        }]
+                    });
+            
+                    var ctx8 = echarts.init(document.getElementById('chart.11'));
+                    ctx8.setOption({
+                        title: {
+                            text: 'ECharts - Line'
+                        },
+                        animation: ${animation},
+                        tooltip: {},
+                        legend: {
+                            data:['Fixed Income', 'Equity', 'Cash']
+                        },
+                        xAxis: {
+                            data: ['Fixed Income', 'Equity', 'Cash']
+                        },
+                        yAxis: {
+                            
+                        },
+                        series: [
+                            {
+                                type: 'line',
+                                data: [12, 19, 3]
+                            }
+                        ]
+                    });
+                </script>
+            `;
+        }
+        else if (chartType === ChartType.PlotyJS) {
+            chartString = `
+                <div id="chart.12" style="height: 400px; max-width: 800px; margin: 0 auto"></div>
+                <div id="chart.13" style="height: 400px; max-width: 800px; margin: 0 auto"></div>
+                <div id="chart.14" style="height: 400px; max-width: 800px; margin: 0 auto"></div>
+                <div id="chart.15" style="height: 400px; max-width: 800px; margin: 0 auto"></div>
+                <script>
+                    Plotly.plot("chart.12", [
+                        {
+                            x: ['Fixed Income', 'Equity', 'Cash'],
+                            y: [12, 19, 3],
+                            type: "bar"
+                        }
+                    ]);
+                
+                    Plotly.plot("chart.13", [
+                        {
+                            y: ['Fixed Income', 'Equity', 'Cash'],
+                            x: [12, 19, 3],
+                            type: "bar",
+                            orientation: 'h'
+                        }
+                    ]);
+                
+                    Plotly.plot("chart.14",  [
+                        {
+                            labels: ['Fixed Income', 'Equity', 'Cash'],
+                            values: [12, 19, 3],
+                            type: "pie"
+                        }
+                    ]);
+                
+                    Plotly.plot("chart.15",  [
+                        {
+                            x: ['Fixed Income', 'Equity', 'Cash'],
+                            y: [12, 19, 3],
+                            type: "scatter"
+                        },
+                        {
+                            x: ['Fixed Income', 'Equity', 'Cash'],
+                            y: [20, 7, 17],
+                            type: "scatter"
+                        }
+                    ]);
+                </script>
+            `;
+        }
+        return `${baseScript}${chartString}`;
+    }
 
     resortColumn() {
         let orders: Array<any> = this.tOptions.column.children.map((item: any) => {
@@ -536,7 +1699,7 @@ export class ReportingComponent implements OnInit {
                         allowShowInMenu: false,
                         visible: true,
                         alignment: "center",
-                        subColumns: subColumns
+                        subColumns
                     };
                     this.columns.push(column);
 
@@ -651,8 +1814,6 @@ export class ReportingComponent implements OnInit {
             this.tOptions.classic.children = this.dsClassifications;
         }
         else if (options.type === DataSourceTypes.Column) {
-            console.info(this.columns);
-            console.warn(options);
             if (options.level === "top") {
                 this.columns.map((column: IGridColumn) => {
                     if (column.dataField === options.name) {
@@ -815,8 +1976,8 @@ export class ReportingComponent implements OnInit {
                 {
                     selector: "r-textinput",
                     options: {
-                        value: value,
-                        name: name,
+                        value,
+                        name,
                         caption: "Column Group Name",
                         form: this.formGroup
                     }
@@ -1157,7 +2318,7 @@ export class ReportingComponent implements OnInit {
                         col.groupIndex = 0;
                         col.caption = col.dataField;
                         col.visible = false;
-                    } 
+                    }
                     else if (col.dataField === orders[1]) {
                         col.groupIndex = -1;
                         col.caption = Caption;
@@ -1170,7 +2331,7 @@ export class ReportingComponent implements OnInit {
                         col.groupIndex = 0;
                         col.caption = col.dataField;
                         col.visible = false;
-                    } 
+                    }
                     else if (col.dataField === orders[1]) {
                         col.groupIndex = 1;
                         col.caption = col.dataField;
@@ -1184,7 +2345,7 @@ export class ReportingComponent implements OnInit {
                     }
                 }
             }
-            
+
         });
         this.summaries.map((sum: IGridColumnSummary) => {
             if (sum.customizeText === customizeSummaryText) {
@@ -1293,6 +2454,12 @@ export class ReportingComponent implements OnInit {
         };
         this.selectedListItem = null;
     }
+
+
+}
+
+enum ChartType {
+    HighCharts = 1, ChartJS, ECharts, PlotyJS
 }
 
 function customizeGroupText(item) {
@@ -1534,4 +2701,8 @@ const appraisalData: any[] = [
     { "Asset Class": "Cash", "Security Type": "Cash Accounts", "Security": "Dividend Accrual (usd)", "Quantity": "NULL", "Unit Cost": "NULL", "Price": "NULL", "Total Cost": "-11138.55", "Market Value": "-11138.55", "% Asset": "-0.096337698" },
     { "Asset Class": "Cash", "Security Type": "Cash Accounts", "Security": "U.S. DOLLAR", "Quantity": "NULL", "Unit Cost": "NULL", "Price": "NULL", "Total Cost": "1597605.28", "Market Value": "1597605.28", "% Asset": "13.81774239" }
 ];
+
+
+
+
 

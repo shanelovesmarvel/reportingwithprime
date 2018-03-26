@@ -6,18 +6,11 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MultiselectDropdownModule } from 'angular2-dropdown-multiselect';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
-import { CdkTableModule } from '@angular/cdk';
 import { GridModule } from '@progress/kendo-angular-grid';
 import { TagInputModule } from 'ngx-chips';
 import { ResizableModule } from 'angular-resizable-element';
 import { DragulaModule } from 'ng2-dragula';
 
-import { 
-  MdTableModule, 
-  MdInputModule, 
-  MdPaginatorModule, 
-  MdSortModule 
-} from '@angular/material';
 
 import {
   TreeModule,
@@ -44,6 +37,14 @@ import {
   DxRadioGroupModule
 } from 'devextreme-angular';
 
+import {
+  MatButtonModule,
+  MatFormFieldModule,
+  MatDatepickerModule,
+  MatNativeDateModule,
+  MatInputModule
+} from '@angular/material';
+
 import { AppComponent } from './app.component';
 import { TextAreaExpandedComponent } from './textarea-expanded.component';
 import { TableComponent } from './table.component';
@@ -52,6 +53,9 @@ import { FormTestComponent } from './form-test.component';
 import { DropdownTestComponent } from './dropdown-test.component';
 import { ReportingComponent } from './reporting.component';
 import { ReportingGridComponent } from './reporting-grid.component';
+import { ReportingFieldsetComponent } from './reporting-fieldset.component';
+import { SetSeatComponent } from './seat.component';
+
 import { 
   ReportingTextboxComponent , 
   ReportingDatepickerComponent, 
@@ -66,7 +70,6 @@ import { CategoriesService } from './portfolio.service';
   declarations: [
     AppComponent,
     TextAreaExpandedComponent,
-    TableComponent,
     PortfolioComponent,
     FormTestComponent,
     DropdownTestComponent,
@@ -76,11 +79,12 @@ import { CategoriesService } from './portfolio.service';
     ReportingDatepickerComponent, 
     ReportingDropdownComponent,
     ReportingRadioGroupComponent,
-    ReportingTextinputComponent
+    ReportingTextinputComponent,
+    ReportingFieldsetComponent,
+    SetSeatComponent
   ],
   exports: [
     TextAreaExpandedComponent,
-    TableComponent,
     PortfolioComponent,
     FormTestComponent,
     DropdownTestComponent,
@@ -90,7 +94,9 @@ import { CategoriesService } from './portfolio.service';
     ReportingDatepickerComponent, 
     ReportingDropdownComponent,
     ReportingRadioGroupComponent,
-    ReportingTextinputComponent
+    ReportingTextinputComponent,
+    ReportingFieldsetComponent,
+    SetSeatComponent
   ],
   imports: [
     BrowserAnimationsModule,
@@ -100,11 +106,6 @@ import { CategoriesService } from './portfolio.service';
     ReactiveFormsModule,
     HttpModule,
     MultiselectDropdownModule,
-    CdkTableModule,
-    MdTableModule,
-    MdInputModule,
-    MdPaginatorModule,
-    MdSortModule,
     NgxDatatableModule,
     GridModule,
     OverlayPanelModule,
@@ -123,9 +124,15 @@ import { CategoriesService } from './portfolio.service';
     DxDataGridModule,
     DxTextBoxModule,
     DxRadioGroupModule,
-    DragulaModule
+    DragulaModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatInputModule
   ],
   providers: [CategoriesService],
+  entryComponents: [ ReportingComponent ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

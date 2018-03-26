@@ -140,7 +140,6 @@ export class ReportingGridComponent implements OnInit {
     }
 
     onResizeEnd(event: ResizeEvent): void {
-        console.info(event);
         this.containerStyle = {
             position: 'absolute',
             left: `${event.rectangle.left}px`,
@@ -151,23 +150,19 @@ export class ReportingGridComponent implements OnInit {
         this.gridWidth = `${event.rectangle.width - 20}px`;
         this.gridHeight =`${event.rectangle.height - 20}px`;
 
-        //this.render2.setStyle(this.eleRef.nativeElement.querySelector(".ui-datatable table"),
-        //    "height", `${event.rectangle.height - 20}px`);
+        //this.render2.setStyle(this.eleRef.nativeElement.querySelector(".ui-datatable table"),  "height", `${event.rectangle.height - 20}px`);
     }
 
     dragStart(event: any): void {
         console.warn("drag start...");
-        console.info(event);
     }
 
     drag(event: any): void {
         console.warn("dragging....");
-        console.info(event);   
     }
 
     dragEnd(event: DragEvent): void {
         console.warn("drag end....");
-        console.info(event);
         this.containerStyle = {
             position: 'absolute',
             left: `${event.clientX}px`,
