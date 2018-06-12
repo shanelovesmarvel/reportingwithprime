@@ -1,7 +1,8 @@
 {
-  "name": "angular4",
-  "version": "0.0.0",
+  "name": "reportingwithprime",
+  "version": "1.0.0",
   "license": "MIT",
+  "author": "Shane Zhao",
   "scripts": {
     "ng": "ng",
     "report": "node server.js",
@@ -12,9 +13,6 @@
     "e2e": "ng e2e"
   },
   "private": true,
-  "jsreport": {
-    "entryPoint": "server.js"
-  },
   "dependencies": {
     "@angular/animations": "^4.3.0",
     "@angular/cdk": "^2.0.0-beta.12",
@@ -27,20 +25,6 @@
     "@angular/platform-browser": "^4.3.0",
     "@angular/platform-browser-dynamic": "^4.3.0",
     "@angular/router": "^4.3.0",
-    "@progress/kendo-angular-dateinputs": "^1.0.5",
-    "@progress/kendo-angular-dropdowns": "^1.1.2",
-    "@progress/kendo-angular-excel-export": "^1.0.3",
-    "@progress/kendo-angular-grid": "^1.2.3",
-    "@progress/kendo-angular-inputs": "^1.0.7",
-    "@progress/kendo-angular-intl": "^1.2.1",
-    "@progress/kendo-angular-l10n": "^1.0.2",
-    "@progress/kendo-data-query": "^1.0.5",
-    "@progress/kendo-drawing": "^1.1.2",
-    "@progress/kendo-theme-default": "^2.38.2",
-    "@swimlane/ngx-datatable": "^9.3.1",
-    "angular-resizable-element": "^1.2.1",
-    "angular-tree-component": "^5.0.0",
-    "angular2-dropdown-multiselect": "^1.2.1",
     "bootstrap": "^3.3.7",
     "chart.js": "^2.7.1",
     "core-js": "^2.4.1",
