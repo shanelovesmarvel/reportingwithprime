@@ -24,7 +24,7 @@
         "../node_modules/primeng/resources/primeng.min.css",
         "../node_modules/devextreme/dist/css/dx.light.compact.css",
         "../node_modules/dragula/dist/dragula.css",
-        "../node_modules/@progress/kendo-theme-default/scss/all.scss",
+        "../node_modules/@progress/kendo-theme-default/dist/all.css",
         "styles.scss"
       ],
       "stylePreprocessorOptions": {
@@ -64,7 +64,7 @@
     }
   },
   "defaults": {
-    "styleExt": "css",
+    "styleExt": "scss",
     "component": {
     },
     "serve": {

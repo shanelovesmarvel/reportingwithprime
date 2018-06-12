@@ -5,10 +5,13 @@
     overflow: hidden;
 
     .r-titlebar {
-        display: inline-flex;
         height: 60px;
         width: 100%;
         background-color: #FAFAFA;
+
+        r-dropdown .ui-dropdown {
+            width: 200px !important;
+        }
     
         .basic-info {
             display: inline-flex;
@@ -19,23 +22,9 @@
             label {
                 color: #c3bcbc;
             }
-        }
 
-        .template-widgets {
-            width: calc(100% - 480px);
-            display: inline-flex;
-            height: 60px;
-            align-items: center;
-            justify-content: center;
-
-            .r-action {
-                font-size: 2rem;
-                margin-left: 2rem;;
-                cursor: pointer;
-            
-                &:hover {
-                    color: #1E90FF;
-                }
+            r-dropdown {
+                margin-left: 40px;
             }
         }
 
@@ -44,12 +33,14 @@
             width: 200px;
             height: 60px;
             align-items: center;
-            justify-content: space-between;
+            justify-content: flex-end;
             padding-right: 20px;
+            float: right;
 
             .r-action {
-                font-size: 2rem;
+                font-size: 1.5rem;
                 cursor: pointer;
+                margin-left: 1rem;
             
                 &:hover {
                     color: #1E90FF;
@@ -61,53 +52,80 @@
     .r-container {
         width: 100%;
         display: inline-flex;
+        height: calc(100% - 60px);
 
         .r-thumbnails {
-            height: inherit;
-            width: 240px;
-            overflow-x: hidden;
-            overflow-y: auto;
-        }
+            width: 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
 
-        .r-editors {
-            height: inherit;
-            width: calc(100% - 540px);
-            overflow-x: hidden;
-            overflow-y: auto;
-            background-color: #FAFAD2;
-
-            .paper {
-                background: white;
-                width: 95%;
-                height: 90%;
-                margin: 20px;
-            }
-
-        }
-
-        .r-configurations {
-            height: inherit;
-            width: 300px;
-            overflow-x: hidden;
-            overflow-y: auto;
-
-            .r-datasource {
-                > h5 {
-                    margin-left: 15px;
-                    margin-top: 20px;
-                }
-
-                .r-line {
-                    width: 100%;
-                    height: 2px;
-                    margin-top: 10px;
-                    margin-bottom: 10px;
-                    background-color: lightgray;
+            .r-action {
+                font-size: 2rem;
+                margin-bottom: 1rem;
+                cursor: pointer;
+            
+                &:hover {
+                    color: #1E90FF;
                 }
             }
 
             .r-add {
-                font-size: 2rem;
+                position: absolute;
+                bottom: 0;
+            }
+        }
+
+        .r-editors {
+            height: 100%;
+            width: calc(100% - 60px);
+            overflow: hidden;
+            display: inline-flex;
+
+            .paper {
+                width: calc(100% - 320px);
+                height: 100%;
+                overflow-y: auto;
+                background-color: aliceblue;
+            }
+
+            .widget-toolbar {
+                position: absolute;
+                float: right;
+                right: 10px;
+                top: 10px;
+                width: 3rem;
+                cursor: pointer;
+
+                &:hover {
+                    .r-action {
+                        visibility: visible;
+                    }    
+                }
+
+                .r-action {
+                    font-size: 1rem; 
+                    margin-left: 0.25rem;
+                    visibility: hidden;
+            
+                    &:hover {
+                        color: #1E90FF;
+                    }
+                }
+            }
+        }
+
+        .r-configurations {
+            height: inherit;
+            width: 320px;
+            overflow-x: hidden;
+            overflow-y: auto;
+            background-color: white;
+
+            .r-add {
+                font-size: 1.8rem;
+                margin-top: -4px;
                 margin-left: 2rem;;
                 cursor: pointer;
             
@@ -118,9 +136,8 @@
 
             .r-group {
                 cursor: pointer;
-                font-size: 1.5rem;
-                margin-top: 3px;
-                margin-right: -15px;
+                font-size: 1.3rem;
+                margin-right: -26px;
                 float: right;
             
                 &:hover {
@@ -134,7 +151,7 @@
             
                 > span {
                     float: right;
-                    margin-right: 20px;
+                    margin-right: 16px;
                 }
             
                 > strong {
@@ -204,6 +221,11 @@
                         padding: 0px 12px;
                         height: 25px;
                         border: none;
+                        background-color: #2399e5;
+
+                        &:hover {
+                            opacity: 0.8;
+                        }
                     }
 
                     .r-button-margin {

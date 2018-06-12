@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Renderer2, ElementRef } from '@angular/core';
-import { ResizeEvent } from 'angular-resizable-element';
+import { RTextbox } from './reporting-textbox.component';
 
 @Component({
     selector: 'r-grid',
@@ -89,7 +89,7 @@ import { ResizeEvent } from 'angular-resizable-element';
                     <dxi-sort-by-group-summary-info summaryItem="Name"></dxi-sort-by-group-summary-info>
                     <dxo-selection mode="none"></dxo-selection>
                     <dxo-load-panel [enabled]="true"></dxo-load-panel>
-                    <dxo-scrolling mode="standard" [preloadEnabled]="true"></dxo-scrolling>
+                    <dxo-scrolling mode="standard" [preloadEnabled]="false"></dxo-scrolling>
                     <dxo-paging [pageSize]="200"></dxo-paging>
                     <dxo-pager [showPageSizeSelector]="true" [showInfo]="true"></dxo-pager>
                     <dxo-grouping [autoExpandAll]="true" [allowCollapsing]="false"></dxo-grouping>
@@ -104,7 +104,7 @@ export class ReportingGridComponent implements OnInit {
 
     gOptions: IGridOptions = null;
     title: string;
-    containerStyle: Object = {};
+    data: any[] = [];
     gridWidth: string =  "450px";
     gridHeight: string = "300px";
 
@@ -120,9 +120,7 @@ export class ReportingGridComponent implements OnInit {
         return this.gOptions;
     }
 
-    data: any[] = [];
-
-    constructor(private render2: Renderer2, private eleRef: ElementRef) { }
+    constructor() { }
 
     ngOnInit() {
 
@@ -131,52 +129,16 @@ export class ReportingGridComponent implements OnInit {
     onContentReady(e) {
         e.component.option("loadPanel.enabled", false);
     }
-
-    validate(event: ResizeEvent): boolean {
-        if (event.rectangle.width < MIN_DIMENSIONS || event.rectangle.height < MIN_DIMENSIONS) {
-            return false;
-        }
-        return true;
-    }
-
-    onResizeEnd(event: ResizeEvent): void {
-        this.containerStyle = {
-            position: 'absolute',
-            left: `${event.rectangle.left}px`,
-            top: `${event.rectangle.top}px`,
-            width: `${event.rectangle.width}px`,
-            height: `${event.rectangle.height}px`
-        };
-        this.gridWidth = `${event.rectangle.width - 20}px`;
-        this.gridHeight =`${event.rectangle.height - 20}px`;
-
-        //this.render2.setStyle(this.eleRef.nativeElement.querySelector(".ui-datatable table"),  "height", `${event.rectangle.height - 20}px`);
-    }
-
-    dragStart(event: any): void {
-        console.warn("drag start...");
-    }
-
-    drag(event: any): void {
-        console.warn("dragging....");
-    }
-
-    dragEnd(event: DragEvent): void {
-        console.warn("drag end....");
-        this.containerStyle = {
-            position: 'absolute',
-            left: `${event.clientX}px`,
-            top: `${event.clientY}px`
-        };
-    }
 }
 
-interface IGridOptions {
+export interface IGridOptions {
     type?: number;
     columns?: IGridColumn[];
     data?: any[];
     summaries?: IGridColumnSummary[];
-    groupSummaries?: IGridColumnSummary[]
+    groupSummaries?: IGridColumnSummary[];
+    editorClassifications?: RTextbox[];
+    editorColumns?: RTextbox[];
 }
 
 export interface IGridColumn {
@@ -223,6 +185,7 @@ export interface IGridColumn {
     headerFilter?: any;
     hidingPriority?: number;
     isBand?: boolean;
+    isCategory?: boolean;
     isClassification?: boolean;
     lookup?: any;
     minWidth?: number;
@@ -257,6 +220,4 @@ export interface IGridColumnSummary {
 enum GridType {
     Asset = 1, Pivot, Transaction, Advanced
 }
-
-const MIN_DIMENSIONS: number = 250;
 

@@ -4,7 +4,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 @Component({
     selector: 'r-textbox',
     template: `
-    <div [id]="tOptions.id" style="display: inline-flex;margin-bottom: 1.5rem;">
+    <div [id]="tOptions.id" class="r-textbox" [class.non-removable]="!tOptions?.removable">
         <span class="k-icon k-i-more-vertical r-icon r-meatball_left"></span>
         <span class="k-icon k-i-more-vertical r-icon r-meatball_right"></span>
         <dx-text-box
@@ -17,14 +17,16 @@ import { FormControl, FormGroup } from '@angular/forms';
             (click)="onClick($event)"
             [value]="tOptions.value">
         </dx-text-box>
-        <span 
+        <span
+            id="editTextbox" 
             draggable="false" 
             [ngClass]="tOptions.editClassName"
-            class="k-icon k-i-gear r-icon" 
+            class="fa fa-pencil r-icon" 
             title="Edit" 
             (click)="onEdit($event)">
         </span>
         <span
+            *ngIf="tOptions?.removable"
             [ngClass]="tOptions.removeClassName" 
             draggable="false" 
             class="fa fa-times r-icon r-remove" 
@@ -93,7 +95,7 @@ export class ReportingTextboxComponent implements OnInit {
     selector: 'r-dropdown',
     template: `
     <div class="r-group">
-        <label>{{sOptions.caption}}</label>
+        <label *ngIf="sOptions.caption">{{sOptions.caption}}</label>
         <p-dropdown
             [options]="sOptions.dataSource"
             [dataKey]="sOptions.valueExpr"
@@ -372,6 +374,7 @@ export interface ITextBox {
     name?: string;
     placeholder?: string;
     readOnly?: boolean;
+    removable?: boolean;
     showClearButton?: boolean;
     spellCheck?: boolean;
     tabIndex?: number;
@@ -386,4 +389,9 @@ export interface ITextBox {
     selected?: boolean;
     parent?: string;
     grouped?: boolean;
+}
+
+export interface RTextbox {
+    selector: string;
+    options: ITextBox;
 }

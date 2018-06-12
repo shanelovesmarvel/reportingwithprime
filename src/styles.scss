@@ -1,10 +1,20 @@
 /* You can add global styles to this file, and also import other style files */
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
 
-@import "shane";
-
 body {
     overflow: hidden;
+    font-family: sans-serif;
+    font-size: 14px;
+    margin: 0;
+}
+
+.widget {
+    position: absolute;
+    border: 2px solid #c9dade;
+
+    .move {
+        z-index: 1;
+    }
 }
 
 .ui-menu .ui-menuitem-text, .ui-menu .ui-menuitem-link .ui-menuitem-icon {
@@ -18,7 +28,7 @@ body {
 .ui-overlaypanel {
     width: 200px !important;
     height: 250px !important;
-    margin-top: -1.8em !important;
+    margin-top: -1.8em;
     background-color: white;
 }
 
@@ -38,11 +48,17 @@ body {
     color: white !important;
 }
 
-p-menu > .ui-menu {
+#gridMenu > .ui-menu {
     background-color: white !important;
-    margin-left: -4em !important;
-    margin-top: 0.25em !important;
-    width: 11em !important;
+    margin-top: -0.25rem !important;
+    width: 9em !important;
+}
+
+#templateMenu > .ui-menu {
+    background-color: white !important;
+    margin-top: -6rem !important;
+    margin-left: 0 !important;
+    width: 9em !important;
 }
 
 #addMenu > .ui-menu {
@@ -69,6 +85,18 @@ p-menu > .ui-menu {
     outline: none !important; 
 }
 
+.dx-datagrid-rowsview {
+    border-top: none !important;
+}
+
+.dx-datagrid-headers {
+    border-bottom: none !important;
+}
+
+.dx-datagrid-total-footer {
+    margin-top: 10px;
+}
+
 .dx-datagrid-rowsview .dx-selection.dx-row:not(.dx-row-lines) > td {
     background-color: #1E90FF !important;
     color: whitesmoke !important;
@@ -88,22 +116,22 @@ p-menu > .ui-menu {
 }
 
 #r-grid {
-     height: 300px;
+     height: 600px !important;
  }
 
-r-textbox {
-    margin-left: -5px;
+.tb .dx-texteditor-container {
+    width: 300px;
+
+    > input {
+        width: 220px !important;
+        padding-left: 30px !important;
+        padding-right: 50px !important;
+    }
 }
 
-.tb .dx-texteditor-container > input {
-    width: 270px !important;
-    padding-left: 20px !important;
-    padding-right: 50px !important;
- }
-
  .sub_tb .dx-texteditor-container > input {
-    width: 250px !important;
-    padding-left: 20px !important;
+    width: 200px !important;
+    padding-left: 30px !important;
     padding-right: 50px !important;
  }
 

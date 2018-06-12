@@ -1,0 +1,97 @@
+.r-editor {
+    .r-datasource {
+        > h5 {
+            margin-left: 15px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            font-size: 1.5rem;
+        }
+    }
+
+    .r-section {
+        height: inherit;
+        width: 320px;
+        overflow-x: hidden;
+        overflow-y: auto;
+        background-color: white;
+
+        .r-titles {
+            width: 100%;
+            background-color: white;
+        
+            > span {
+                float: right;
+                margin-right: 16px;
+            }
+        
+            > strong {
+                margin-left: 15px;
+            }
+
+            .r-add {
+                font-size: 1.8rem;
+                margin-top: -4px;
+                margin-left: 2rem;;
+                cursor: pointer;
+            
+                &:hover {
+                    color: #1E90FF;
+                }
+            }
+
+            .r-group {
+                cursor: pointer;
+                font-size: 1.3rem;
+                margin-right: -26px;
+                float: right;
+            
+                &:hover {
+                    color: #1E90FF;
+                }
+            }
+        }
+
+        .r-content {
+            margin-top: 10px;
+
+            ul {
+                list-style-type: none; 
+            }
+
+            .r-content-widgets {
+                margin-left: -40px;
+            }
+
+            .r-content-subwidgets {
+                margin-left: -20px;
+            }
+
+            li {
+                list-style-type: none; 
+                .dx-texteditor-container > input {
+                    width: 250px !important;
+                    padding-left: 20px !important;
+                    padding-right: 50px !important;
+                    }
+            }
+        }
+
+
+        .r-line {
+            width: 100%;
+            height: 2px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            background-color: lightgray;
+        }
+
+    }
+
+    .r-line {
+        width: 100%;
+        height: 2px;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        background-color: lightgray;
+    }
+}
