@@ -65,7 +65,7 @@ import {
             </div>
             <div class="r-editors">
                 <div class="paper" id="reportPlaceholder">
-                    <div id="widgetContainer" [ngWidgetContainer]="widgetContainerOptions">
+                    <div id="widgetContainer" [ngWidgetContainer]="widgetContainerOptions" style="padding-bottom: 20px;"> 
                         <div id="widgetContainer2" *ngFor="let widget of options.children; let inn=index;" [(ngWidget)]="widget.config">
                             <div class="widget-toolbar">
                                 <i id="template-edit" class="fa fa-pencil r-action" aria-hidden="true" title="Edit" (click)="editWidget(inn)"></i>
